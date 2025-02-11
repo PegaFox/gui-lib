@@ -2,7 +2,7 @@
 #define PEGAFOX_GUI_LIB_GUI_HPP
 
 #include "drag_field.hpp"
-#include "vertex_array.hpp"
+#include "button.hpp"
 #include "paragraph.hpp"
 #include "window.hpp"
 
