@@ -16,7 +16,7 @@ namespace pfui
       {
         None,// this is for invalid states and should not be used regularly in-game
         Window,
-        Text,
+        Paragraph,
         Button,
         VertexArray,
         DragField,

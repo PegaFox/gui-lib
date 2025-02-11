@@ -4,7 +4,7 @@ using namespace pfui;
 
 Paragraph::Paragraph()
 {
-  type = ElementType::Text;
+  type = ElementType::Paragraph;
 
   text.setString("Hello, World!");
 }
