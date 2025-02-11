@@ -49,34 +49,35 @@ Window::Window(const std::initializer_list<GUIElement*>& children)
 
 void Window::setOpen(bool open)
 {
-  if (open) close = -1;
-  else close = 255;
+  if (open) close = 1.0f;
+  else close = 0.99f;
 }
 
 bool Window::isOpen()
 {
-  return close == -1;
+  return close == 1.0f;
 }
 
 void Window::setMaximize(bool maximize)
 {
-  this->maximize = (SCREEN->getSize().y * ((maximize<<1)-1)) / 2.0f;
+  if (maximize && this->maximize == 0.0f) this->maximize = 0.01f;
+  else if (!maximize && this->maximize == 1.0f) this->maximize = -1.0f;
 }
 
 bool Window::isMaximized()
 {
-  return maximize > -1;
+  return maximize > 0.0f;
 }
 
 void Window::setMinimize(bool minimize)
 {
-  float pixHeight = SCREEN->getSize().y*size.y;
-  this->minimize = pixHeight * ((minimize<<1)-1);
+  if (minimize && this->minimize == 1.0f) this->minimize = 0.99f;
+  else if (!minimize && this->minimize == 0.0f) this->minimize = -0.01f;
 }
 
 bool Window::isMinimized()
 {
-  return minimize > -1;
+  return minimize < 1.0f && minimize >= 0.0f;
 }
 
 GUIElement* Window::addChild(GUIElement* child)
@@ -119,7 +120,7 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
 {
   this->SCREEN = &SCREEN;
 
-  if (close == 0) return;
+  if (close == 0.0f) return;
 
   if (transform == glm::mat3(0.0f))
   {
@@ -176,7 +177,13 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
   //body.pos = pos;
   //body.size = size;
 
-  glm::mat3 windowTransform = transform * glm::mat3(glm::vec3(size.x*0.5f, 0, 0), glm::vec3(0, size.y*0.5f, 0), glm::vec3(pos.x, pos.y, 1));
+  glm::vec2 modifiedPos = glm::mix(pos, glm::vec2(0.0f, hasTitlebar * titlebar.size.y*0.5f), glm::abs(maximize));
+  modifiedPos.y -= (1.0f - glm::abs(minimize))*0.75f;
+
+  glm::vec2 modifiedSize = glm::mix(size, glm::vec2(2.0f, 2.0f - hasTitlebar * titlebar.size.y), glm::abs(maximize)) * close;
+  modifiedSize.y *= glm::abs(minimize);
+
+  glm::mat3 windowTransform = transform * glm::mat3(glm::vec3(modifiedSize.x*0.5f, 0, 0), glm::vec3(0, modifiedSize.y*0.5f, 0), glm::vec3(modifiedPos.x, modifiedPos.y, 1));
 
   body.draw(SCREEN, windowTransform);
 
@@ -188,29 +195,32 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
 
   if (hasTitlebar)
   {
-    titlebar.pos = glm::vec2(pos.x, pos.y - size.y*0.5f - titlebar.size.y*0.5f);
-    titlebar.size.x = size.x;
+    titlebar.pos = glm::vec2(modifiedPos.x, modifiedPos.y - modifiedSize.y*0.5f - titlebar.size.y*0.5f);
+    titlebar.size.x = glm::mix(size.x, 2.0f, glm::abs(maximize))*close;
     titlebar.draw(SCREEN);
   }
 
-  float buttonOffset = titlebar.size.y*0.5f;
+  if (close == 1.0f)
+  {
+    float buttonOffset = titlebar.size.y*0.5f;
 
-  if (closeButton)
-  {
-    closeSpr.pos = glm::vec2(titlebar.pos.x+(titlebar.size.x*0.5f-buttonOffset), titlebar.pos.y);
-    closeSpr.draw(SCREEN);
-    buttonOffset += titlebar.size.y;
-  }
-  if (maximizeButton)
-  {
-    maximizeSpr.pos = glm::vec2(titlebar.pos.x+(titlebar.size.x*0.5f-buttonOffset), titlebar.pos.y);
-    maximizeSpr.draw(SCREEN);
-    buttonOffset += titlebar.size.y;
-  }
-  if (minimizeButton)
-  {
-    minimizeSpr.pos = glm::vec2(titlebar.pos.x+(titlebar.size.x*0.5f-buttonOffset), titlebar.pos.y);
-    minimizeSpr.draw(SCREEN);
+    if (closeButton)
+    {
+      closeSpr.pos = glm::vec2(titlebar.pos.x+(titlebar.size.x*0.5f-buttonOffset), titlebar.pos.y);
+      closeSpr.draw(SCREEN);
+      buttonOffset += titlebar.size.y;
+    }
+    if (maximizeButton)
+    {
+      maximizeSpr.pos = glm::vec2(titlebar.pos.x+(titlebar.size.x*0.5f-buttonOffset), titlebar.pos.y);
+      maximizeSpr.draw(SCREEN);
+      buttonOffset += titlebar.size.y;
+    }
+    if (minimizeButton)
+    {
+      minimizeSpr.pos = glm::vec2(titlebar.pos.x+(titlebar.size.x*0.5f-buttonOffset), titlebar.pos.y);
+      minimizeSpr.draw(SCREEN);
+    }
   }
 
   // contents
@@ -252,12 +262,8 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
 
       if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
       {
-        close = 255;
+        setOpen(false);
         maximize = -1;
-
-        closeButton = false;
-        maximizeButton = false;
-        minimizeButton = false;
       }
     }
     if (maximizeButton && maximizeSpr.getGlobalBounds().contains(sf::Vector2f(mPos.x, mPos.y)))
@@ -272,8 +278,8 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
 
       if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
       {
-        if (maximize == -1) setMaximize(true);
-        if (maximize == 0) setMaximize(false);
+        setMinimize(false);
+        setMaximize(!isMaximized());
       }
     }
 
@@ -292,13 +298,13 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
 
       if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
       {
-        if (minimize == 0) minimize = -size.y;
-        if (minimize == -1) minimize = size.y;
+        setMaximize(false);
+        setMinimize(!isMinimized());
       }
     }
   }
 
-  if (resizeable && held == nullptr)
+  if (resizeable && minimize == 1.0f && held == nullptr)
   {
     const float resizeWidth = 2.0f;
     sf::FloatRect bounds = body.getGlobalBounds();
@@ -423,15 +429,40 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
       y.value -= y.normalized ? (pos[1] + halfSize[1] - windowHeight) / windowHeight : pos[1] + halfSize[1] - windowHeight;
   }*/
 
-  if (close > 0) {
-    close--;
-    size.x *= 0.5;
-    size.y *= 0.5;
+  if (close != 1.0f)
+  {
+    close *= 0.65f;
   }
-  if (maximize != -1) {
-    maximize *= 0.7f;
+
+  if (maximize > 0.0f)
+  {
+    maximize = (maximize-1.0f)*0.8f + 1.0f;
+    if (maximize > 0.99f)
+    {
+      maximize = 1.0f;
+    }
+  } else if (maximize < 0.0f)
+  {
+    maximize *= 0.8f;
+    if (maximize > -0.01f)
+    {
+      maximize = 0.0f;
+    }
   }
-  if (minimize != -1.0f) {
+
+  if (minimize > 0.0f && minimize < 1.0f)
+  {
     minimize *= 0.8f;
+    if (minimize < 0.01f)
+    {
+      minimize = 0.0f;
+    }
+  } else if (minimize < 0.0f)
+  {
+    minimize = (minimize+1.0f)*0.8f - 1.0f;
+    if (minimize < -0.99f)
+    {
+      minimize = 1.0f;
+    }
   }
 }

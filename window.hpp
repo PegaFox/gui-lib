@@ -56,9 +56,9 @@ namespace pfui
       VertexArray maximizeSpr;
       VertexArray minimizeSpr;
 
-      int16_t close = -1;
+      float close = 1.0f;
       float maximize = 0.0f;
-      float minimize = -1.0f;
+      float minimize = 1.0f;
   };
 }
 

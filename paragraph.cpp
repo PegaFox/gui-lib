@@ -20,6 +20,11 @@ void Paragraph::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
   glm::vec2 projectedPos(transform * glm::vec3(pos, 1.0f));
   glm::vec2 projectedSize(transform * glm::vec3(size, 0.0f));
 
+  if (projectedSize.x == 0.0f || projectedSize.y == 0.0f)
+  {
+    return;
+  }
+
   /*float pos[2] = {
     x.normalized ? windowWidth*x.value : x.value,
     y.normalized ? windowHeight*y.value : y.value
