@@ -193,23 +193,23 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
     titlebar.draw(SCREEN);
   }
 
-  float buttonOffset = 0.45f;
+  float buttonOffset = titlebar.size.y*0.5f;
 
   if (closeButton)
   {
-    closeSpr.pos = glm::vec2(titlebar.pos.x+titlebar.size.x*buttonOffset, titlebar.pos.y);
+    closeSpr.pos = glm::vec2(titlebar.pos.x+(titlebar.size.x*0.5f-buttonOffset), titlebar.pos.y);
     closeSpr.draw(SCREEN);
-    buttonOffset -= 0.1f;
+    buttonOffset += titlebar.size.y;
   }
   if (maximizeButton)
   {
-    maximizeSpr.pos = glm::vec2(titlebar.pos.x+titlebar.size.x*buttonOffset, titlebar.pos.y);
+    maximizeSpr.pos = glm::vec2(titlebar.pos.x+(titlebar.size.x*0.5f-buttonOffset), titlebar.pos.y);
     maximizeSpr.draw(SCREEN);
-    buttonOffset -= 0.1f;
+    buttonOffset += titlebar.size.y;
   }
   if (minimizeButton)
   {
-    minimizeSpr.pos = glm::vec2(titlebar.pos.x+titlebar.size.x*buttonOffset, titlebar.pos.y);
+    minimizeSpr.pos = glm::vec2(titlebar.pos.x+(titlebar.size.x*0.5f-buttonOffset), titlebar.pos.y);
     minimizeSpr.draw(SCREEN);
   }
 
@@ -236,10 +236,20 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
     children.first[c]->draw(SCREEN, windowTransform);
   }
 
+  bool cursorChanged = false;
+
   if (held == nullptr)
   {
     if (closeButton && closeSpr.getGlobalBounds().contains(sf::Vector2f(mPos.x, mPos.y)))
     {
+      if (dynamic_cast<sf::RenderWindow*>(this->SCREEN))
+      {
+        sf::Cursor newCursor;
+        newCursor.loadFromSystem(sf::Cursor::Hand);
+        dynamic_cast<sf::RenderWindow*>(this->SCREEN)->setMouseCursor(newCursor);
+        cursorChanged = true;
+      }
+
       if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
       {
         close = 255;
@@ -252,6 +262,14 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
     }
     if (maximizeButton && maximizeSpr.getGlobalBounds().contains(sf::Vector2f(mPos.x, mPos.y)))
     {
+      if (dynamic_cast<sf::RenderWindow*>(this->SCREEN))
+      {
+        sf::Cursor newCursor;
+        newCursor.loadFromSystem(sf::Cursor::Hand);
+        dynamic_cast<sf::RenderWindow*>(this->SCREEN)->setMouseCursor(newCursor);
+        cursorChanged = true;
+      }
+
       if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
       {
         if (maximize == -1) setMaximize(true);
@@ -264,6 +282,14 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
     minimizeBounds.top -= minimizeBounds.height;
     if (minimizeButton && minimizeBounds.contains(sf::Vector2f(mPos.x, mPos.y)))
     {
+      if (dynamic_cast<sf::RenderWindow*>(this->SCREEN))
+      {
+        sf::Cursor newCursor;
+        newCursor.loadFromSystem(sf::Cursor::Hand);
+        dynamic_cast<sf::RenderWindow*>(this->SCREEN)->setMouseCursor(newCursor);
+        cursorChanged = true;
+      }
+
       if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
       {
         if (minimize == 0) minimize = -size.y;
@@ -274,14 +300,20 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
 
   if (resizeable && held == nullptr)
   {
-    glm::vec2 winMousePos = glm::inverse(windowTransform) * glm::vec3(mPos.x, mPos.y, 1.0f);
-    if (winMousePos.x < -0.9f && winMousePos.x > -1.0f && winMousePos.y > -0.9f && winMousePos.y < 0.9f) // if left edge is grabbed
+    const float resizeWidth = 2.0f;
+    sf::FloatRect bounds = body.getGlobalBounds();
+    float mouseLeftDis = glm::abs(mPos.x - bounds.left);
+    float mouseRightDis = glm::abs(mPos.x - (bounds.left + bounds.width));
+    float mouseTopDis = glm::abs(mPos.y - bounds.top);
+    float mouseBottomDis = glm::abs(mPos.y - (bounds.top + bounds.height));
+    if (mouseLeftDis < resizeWidth && mPos.y > bounds.top && mPos.y < bounds.top+bounds.height) // if left edge is grabbed
     {
       if (dynamic_cast<sf::RenderWindow*>(this->SCREEN))
       {
         sf::Cursor newCursor;
         newCursor.loadFromSystem(sf::Cursor::SizeLeft);
         dynamic_cast<sf::RenderWindow*>(this->SCREEN)->setMouseCursor(newCursor);
+        cursorChanged = true;
       }
 
       if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -292,13 +324,14 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
         resizeDirs.flags.top = false;
         resizeDirs.flags.bottom = false;
       }
-    } else if (winMousePos.x > 0.9f && winMousePos.x < 1.0f && winMousePos.y > -0.9f && winMousePos.y < 0.9f) // if right edge is grabbed
+    } else if (mouseRightDis < resizeWidth && mPos.y > bounds.top && mPos.y < bounds.top+bounds.height) // if right edge is grabbed
     {
       if (dynamic_cast<sf::RenderWindow*>(this->SCREEN))
       {
         sf::Cursor newCursor;
         newCursor.loadFromSystem(sf::Cursor::SizeRight);
         dynamic_cast<sf::RenderWindow*>(this->SCREEN)->setMouseCursor(newCursor);
+        cursorChanged = true;
       }
 
       if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -309,13 +342,14 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
         resizeDirs.flags.top = false;
         resizeDirs.flags.bottom = false;
       }
-    } else if (winMousePos.x > -0.9f && winMousePos.x < 0.9f && winMousePos.y < -0.9f && winMousePos.y > -1.0f) // if top edge is grabbed
+    } else if (mPos.x > bounds.left && mPos.x < bounds.left+bounds.width && mouseTopDis < resizeWidth) // if top edge is grabbed
     {
       if (dynamic_cast<sf::RenderWindow*>(this->SCREEN))
       {
         sf::Cursor newCursor;
         newCursor.loadFromSystem(sf::Cursor::SizeTop);
         dynamic_cast<sf::RenderWindow*>(this->SCREEN)->setMouseCursor(newCursor);
+        cursorChanged = true;
       }
   
       if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -326,13 +360,14 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
         resizeDirs.flags.top = true;
         resizeDirs.flags.bottom = false;
       }
-    } else if (winMousePos.x > -0.9f && winMousePos.x < 0.9f && winMousePos.y > 0.9f && winMousePos.y < 1.0f) // if bottom edge is grabbed
+    } else if (mPos.x > bounds.left && mPos.x < bounds.left+bounds.width && mouseBottomDis < resizeWidth) // if bottom edge is grabbed
     {
       if (dynamic_cast<sf::RenderWindow*>(this->SCREEN))
       {
         sf::Cursor newCursor;
         newCursor.loadFromSystem(sf::Cursor::SizeBottom);
         dynamic_cast<sf::RenderWindow*>(this->SCREEN)->setMouseCursor(newCursor);
+        cursorChanged = true;
       }
 
       if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -342,14 +377,6 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
         resizeDirs.flags.right = false;
         resizeDirs.flags.top = false;
         resizeDirs.flags.bottom = true;
-      }
-    } else
-    {
-      if (dynamic_cast<sf::RenderWindow*>(this->SCREEN))
-      {
-        sf::Cursor newCursor;
-        newCursor.loadFromSystem(sf::Cursor::Arrow);
-        dynamic_cast<sf::RenderWindow*>(this->SCREEN)->setMouseCursor(newCursor);
       }
     }
   }
@@ -364,20 +391,24 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
       sf::Cursor newCursor;
       newCursor.loadFromSystem(sf::Cursor::SizeAll);
       dynamic_cast<sf::RenderWindow*>(this->SCREEN)->setMouseCursor(newCursor);
+      cursorChanged = true;
     }
   } else if (held.get() == this)
   {
     if (!sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
       held = nullptr;
-
-      if (dynamic_cast<sf::RenderWindow*>(this->SCREEN))
-      {
-        sf::Cursor newCursor;
-        newCursor.loadFromSystem(sf::Cursor::Arrow);
-        dynamic_cast<sf::RenderWindow*>(this->SCREEN)->setMouseCursor(newCursor);
-      }
+    } else
+    {
+      cursorChanged = true;
     }
+  }
+
+  if (cursorChanged == false && dynamic_cast<sf::RenderWindow*>(this->SCREEN))
+  {
+    sf::Cursor newCursor;
+    newCursor.loadFromSystem(sf::Cursor::Arrow);
+    dynamic_cast<sf::RenderWindow*>(this->SCREEN)->setMouseCursor(newCursor);
   }
 
   //keep window on-screen
