@@ -1,4 +1,5 @@
 #include "drag_field.hpp"
+#include <algorithm>
 #include <fstream>
 
 using namespace pfui;
@@ -7,11 +8,11 @@ DragField::DragField(const std::initializer_list<DragBox*>& children)
 {
   type = ElementType::DragField;
 
-  body.shape.setPrimitiveType(sf::TriangleFan);
-  body.shape.append(sf::Vertex(sf::Vector2f(-0.5f, -0.5f), sf::Color(100, 50, 0)));
-  body.shape.append(sf::Vertex(sf::Vector2f(-0.5f, 0.5f), sf::Color(100, 50, 0)));
-  body.shape.append(sf::Vertex(sf::Vector2f(0.5f, 0.5f), sf::Color(100, 50, 0)));
-  body.shape.append(sf::Vertex(sf::Vector2f(0.5f, -0.5f), sf::Color(100, 50, 0)));
+  body.shape.setPrimitiveType(sf::PrimitiveType::TriangleFan);
+  body.shape.append(sf::Vertex{sf::Vector2f(-0.5f, -0.5f), sf::Color(100, 50, 0)});
+  body.shape.append(sf::Vertex{sf::Vector2f(-0.5f, 0.5f), sf::Color(100, 50, 0)});
+  body.shape.append(sf::Vertex{sf::Vector2f(0.5f, 0.5f), sf::Color(100, 50, 0)});
+  body.shape.append(sf::Vertex{sf::Vector2f(0.5f, -0.5f), sf::Color(100, 50, 0)});
 
   for (DragBox* child: children)
   {
@@ -103,10 +104,10 @@ void DragField::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
     if (body.getGlobalBounds().contains(sf::Vector2f(mPos.x, mPos.y)))
     {
       uint8_t index = -1;
-      float yPos = body.getGlobalBounds().top;
+      float yPos = body.getGlobalBounds().position.y;
       for (uint8_t c = drawStart; c < children.second; c++)
       {
-        float itemHeight = children.first[c]->getGlobalBounds().height;
+        float itemHeight = children.first[c]->getGlobalBounds().size.y;
 
         if (mPos.y >= yPos && mPos.y < yPos + itemHeight)
         {
@@ -147,12 +148,12 @@ void DragField::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
       drawHeight += children.first[c]->size.y;
     }
 
-    if ((c == drawStart ? body.getGlobalBounds().top + children.first[c]->getGlobalBounds().height : children.first[c-1]->getGlobalBounds().top + children.first[c-1]->getGlobalBounds().height + children.first[c]->getGlobalBounds().height) > body.getGlobalBounds().top + body.getGlobalBounds().height)
+    if ((c == drawStart ? body.getGlobalBounds().position.y + children.first[c]->getGlobalBounds().size.y : children.first[c-1]->getGlobalBounds().position.y + children.first[c-1]->getGlobalBounds().size.y + children.first[c]->getGlobalBounds().size.y) > body.getGlobalBounds().position.y + body.getGlobalBounds().size.y)
     {
       break;
     }
 
-    if (held == nullptr && sf::Mouse::isButtonPressed(sf::Mouse::Left) && children.first[c]->getGlobalBounds().contains(sf::Vector2f(mPos.x, mPos.y)))
+    if (held == nullptr && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && children.first[c]->getGlobalBounds().contains(sf::Vector2f(mPos.x, mPos.y)))
     {
       held = children.first[c];
       resizeDirs.value = 0;
@@ -174,7 +175,7 @@ void DragField::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
     scrollValue = 0.0f;
   }
 
-  if (!sf::Mouse::isButtonPressed(sf::Mouse::Left))
+  if (!sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
   {
     held = nullptr;
   }

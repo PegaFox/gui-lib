@@ -68,8 +68,8 @@ void Paragraph::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
 
         bounds = text.getGlobalBounds();
 
-        boundsPos = glm::vec2(bounds.left, bounds.top);
-        boundsSize = glm::vec2(bounds.width, bounds.height);
+        boundsPos = glm::vec2(bounds.position.x, bounds.position.y);
+        boundsSize = glm::vec2(bounds.size.x, bounds.size.y);
 
         boundsPos = invTransform * glm::vec3(boundsPos, 1.0f);
         boundsSize = invTransform * glm::vec3(boundsSize, 0.0f);
@@ -99,8 +99,8 @@ void Paragraph::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
 
           bounds = text.getGlobalBounds();
 
-          boundsPos = glm::vec2(bounds.left, bounds.top);
-          boundsSize = glm::vec2(bounds.width, bounds.height);
+          boundsPos = glm::vec2(bounds.position.x, bounds.position.y);
+          boundsSize = glm::vec2(bounds.size.x, bounds.size.y);
 
           boundsPos = invTransform * glm::vec3(boundsPos, 1.0f);
           boundsSize = invTransform * glm::vec3(boundsSize, 0.0f);
@@ -131,8 +131,8 @@ void Paragraph::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
 
         bounds = text.getGlobalBounds();
 
-        boundsPos = glm::vec2(bounds.left, bounds.top);
-        boundsSize = glm::vec2(bounds.width, bounds.height);
+        boundsPos = glm::vec2(bounds.position.x, bounds.position.y);
+        boundsSize = glm::vec2(bounds.size.x, bounds.size.y);
 
         boundsPos = invTransform * glm::vec3(boundsPos, 1.0f);
         boundsSize = invTransform * glm::vec3(boundsSize, 0.0f);
@@ -165,8 +165,8 @@ void Paragraph::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
 
           bounds = text.getGlobalBounds();
 
-          boundsPos = glm::vec2(bounds.left, bounds.top);
-          boundsSize = glm::vec2(bounds.width, bounds.height);
+          boundsPos = glm::vec2(bounds.position.x, bounds.position.y);
+          boundsSize = glm::vec2(bounds.size.x, bounds.size.y);
 
           boundsPos = invTransform * glm::vec3(boundsPos, 1.0f);
           boundsSize = invTransform * glm::vec3(boundsSize, 0.0f);
@@ -187,8 +187,8 @@ void Paragraph::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
 
         bounds = text.getGlobalBounds();
 
-        boundsPos = glm::vec2(bounds.left, bounds.top);
-        boundsSize = glm::vec2(bounds.width, bounds.height);
+        boundsPos = glm::vec2(bounds.position.x, bounds.position.y);
+        boundsSize = glm::vec2(bounds.size.x, bounds.size.y);
 
         boundsPos = invTransform * glm::vec3(boundsPos, 1.0f);
         boundsSize = invTransform * glm::vec3(boundsSize, 0.0f);

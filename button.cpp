@@ -6,11 +6,11 @@ Button::Button()
 {
   type = ElementType::Button;
 
-  body.shape.setPrimitiveType(sf::TriangleFan);
-  body.shape.append(sf::Vertex(sf::Vector2f(-0.5f, -0.5f), sf::Color(100, 100, 100)));
-  body.shape.append(sf::Vertex(sf::Vector2f(-0.5f, 0.5f), sf::Color(100, 100, 100)));
-  body.shape.append(sf::Vertex(sf::Vector2f(0.5f, 0.5f), sf::Color(100, 100, 100)));
-  body.shape.append(sf::Vertex(sf::Vector2f(0.5f, -0.5f), sf::Color(100, 100, 100)));
+  body.shape.setPrimitiveType(sf::PrimitiveType::TriangleFan);
+  body.shape.append(sf::Vertex{sf::Vector2f(-0.5f, -0.5f), sf::Color(100, 100, 100)});
+  body.shape.append(sf::Vertex{sf::Vector2f(-0.5f, 0.5f), sf::Color(100, 100, 100)});
+  body.shape.append(sf::Vertex{sf::Vector2f(0.5f, 0.5f), sf::Color(100, 100, 100)});
+  body.shape.append(sf::Vertex{sf::Vector2f(0.5f, -0.5f), sf::Color(100, 100, 100)});
 }
 
 bool Button::isPressed()
@@ -35,14 +35,14 @@ void Button::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
   body.draw(SCREEN, transform);
 
   bool currentlyPressed = false;
-  if (getGlobalBounds().contains(mPos.x, mPos.y))
+  if (getGlobalBounds().contains(sf::Vector2f(mPos.x, mPos.y)))
   {
     body.shape[0].color = sf::Color(150, 150, 150);
     body.shape[1].color = sf::Color(150, 150, 150);
     body.shape[2].color = sf::Color(150, 150, 150);
     body.shape[3].color = sf::Color(150, 150, 150);
 
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
     {
       body.shape[0].color = sf::Color(80, 80, 80);
       body.shape[1].color = sf::Color(80, 80, 80);

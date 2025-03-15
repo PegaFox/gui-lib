@@ -7,14 +7,15 @@
 using namespace pfui;
 
 // must be called for all events in order for gui elements to be interactable
-void GUIElement::getEvent(sf::Event& event)
+void GUIElement::getEvent(const std::optional<sf::Event>& event)
 {
-  switch (event.type)
+  if (event)
   {
-    case sf::Event::MouseMoved:
-      if (held != nullptr && sf::IntRect(0, 0, SCREEN->getSize().x, SCREEN->getSize().y).contains(sf::Vector2i(event.mouseMove.x, event.mouseMove.y)))
+    if (const sf::Event::MouseMoved* move = event->getIf<sf::Event::MouseMoved>())
+    {
+      if (held != nullptr && sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(SCREEN->getSize())).contains(move->position))
       {
-        glm::vec2 delta = (glm::vec2(event.mouseMove.x, event.mouseMove.y) - glm::vec2(mPos)) / glm::vec2(SCREEN->getSize().x*0.5f, SCREEN->getSize().y*0.5f);
+        glm::vec2 delta = (glm::vec2(move->position.x, move->position.y) - glm::vec2(mPos)) / glm::vec2(SCREEN->getSize().x*0.5f, SCREEN->getSize().y*0.5f);
         if (resizeDirs.value == 0)
         {
           held->pos += delta;
@@ -42,11 +43,11 @@ void GUIElement::getEvent(sf::Event& event)
           }
         }
       }
-      mPos = glm::ivec2(event.mouseMove.x, event.mouseMove.y);
-      break;
-    case sf::Event::MouseWheelScrolled:
-      scrollValue += event.mouseWheelScroll.delta;
-      break;
+      mPos = glm::ivec2(move->position.x, move->position.y);
+    } else if (const sf::Event::MouseWheelScrolled* scroll = event->getIf<sf::Event::MouseWheelScrolled>())
+    {
+      scrollValue += scroll->delta;
+    }
   }
 }
 

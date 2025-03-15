@@ -11,7 +11,7 @@ namespace pfui
   {
     public:
       static sf::Font font;
-      sf::Text text;
+      sf::Text text = sf::Text(font);
 
       enum class WrapMode: uint8_t
       {

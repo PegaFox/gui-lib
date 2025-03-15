@@ -30,7 +30,7 @@ namespace pfui
       glm::vec2 size = glm::vec2(2.0f);
 
       // must be called for all events in order for gui elements to be interactable
-      static void getEvent(sf::Event& event);
+      static void getEvent(const std::optional<sf::Event>& event);
 
       ElementType getType();
 
