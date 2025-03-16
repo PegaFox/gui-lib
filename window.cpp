@@ -179,7 +179,7 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
   //body.size = size;
 
   glm::vec2 modifiedPos = glm::mix(pos, glm::vec2(0.0f, hasTitlebar * titlebar.size.y*0.5f), glm::abs(maximize));
-  modifiedPos.y -= (1.0f - glm::abs(minimize))*0.75f;
+  modifiedPos.y -= (1.0f - glm::abs(minimize))*size.y*0.5f;
 
   glm::vec2 modifiedSize = glm::mix(size, glm::vec2(2.0f, 2.0f - hasTitlebar * titlebar.size.y), glm::abs(maximize)) * close;
   modifiedSize.y *= glm::abs(minimize);
