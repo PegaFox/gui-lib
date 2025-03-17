@@ -117,6 +117,11 @@ uint8_t Window::childNum()
   return children.second;
 }
 
+sf::FloatRect Window::getGlobalBounds()
+{
+  return sf::FloatRect(titlebar.getGlobalBounds().position, body.getGlobalBounds().size+sf::Vector2f(0.0f, titlebar.getGlobalBounds().size.y));
+}
+
 void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
 {
   this->SCREEN = &SCREEN;

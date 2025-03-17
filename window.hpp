@@ -47,6 +47,8 @@ namespace pfui
 
       uint8_t childNum();
 
+      sf::FloatRect getGlobalBounds();
+
       virtual void draw(sf::RenderTarget& SCREEN, glm::mat3 transform = glm::mat3(0.0f));
     private:
       std::pair<std::array<std::unique_ptr<GUIElement>, 32>, uint8_t> children;
