@@ -6,6 +6,7 @@ Paragraph::Paragraph()
 {
   type = ElementType::Paragraph;
 
+  text.setFont(font);
   text.setString("Hello, World!");
 }
 
@@ -49,12 +50,21 @@ void Paragraph::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
   }*/
 
   text.setCharacterSize(transform[1].y*2.0f);
-  text.setFont(font);
   text.setPosition(sf::Vector2f(projectedPos.x, projectedPos.y));
   text.setScale(sf::Vector2f(projectedSize.x/(transform[1].y*2.0f), projectedSize.y/(transform[1].y*2.0f)));
 
   const std::string originalStr = text.getString();
   std::string paragraphStr = originalStr;
+
+  if (scrollable)
+  {
+    std::size_t pos = 0;
+    for (uint32_t l = 0; l < drawStart; l++)
+    {
+      pos = paragraphStr.find('\n', pos)+1;
+    }
+    paragraphStr.erase(0, pos);
+  }
 
   sf::FloatRect bounds;
   glm::vec2 boundsPos;
@@ -82,7 +92,7 @@ void Paragraph::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
 
       if (boundsPos.y+boundsSize.y > 1.0f)
       {
-        text.setString("");
+        //text.setString("");
       }
       break;
     case WrapMode::LetterWrap:
@@ -208,6 +218,12 @@ void Paragraph::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
   }
 
   SCREEN.draw(text);
+
+  if (scrollable && text.getGlobalBounds().contains(sf::Vector2f(mPos.x, mPos.y)))
+  {
+    drawStart = glm::clamp((float)drawStart-scrollValue, 0.0f, (float)originalStr.size());
+    scrollValue = 0.0f;
+  }
 
   text.setString(originalStr);
 }

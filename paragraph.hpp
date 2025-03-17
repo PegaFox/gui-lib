@@ -13,6 +13,9 @@ namespace pfui
       static sf::Font font;
       sf::Text text = sf::Text(font);
 
+      bool scrollable = false;
+      uint32_t drawStart = 0;
+
       enum class WrapMode: uint8_t
       {
         None,
