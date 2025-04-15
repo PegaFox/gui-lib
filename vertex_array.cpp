@@ -31,5 +31,5 @@ void VertexArray::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
   }
 
   globalBounds = draw.getBounds();
-  SCREEN.draw(draw);
+  SCREEN.draw(draw, shapeRenderStates);
 }
