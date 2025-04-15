@@ -11,6 +11,7 @@ namespace pfui
   class VertexArray: public GUIElement
   {
     public:
+      sf::RenderStates shapeRenderStates = sf::RenderStates::Default;
       sf::VertexArray shape;
 
       VertexArray(sf::PrimitiveType type = sf::PrimitiveType::Points);

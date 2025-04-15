@@ -142,7 +142,7 @@ void DragField::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
       children.first[c]->size.y = children.first[c]->size.x / ratio;
 
       drawHeight += children.first[c]->size.y*0.5f;
-      children.first[c]->pos.x = (childTransform * glm::vec3(pos.x, 0.0f, 1.0f)).x;
+      children.first[c]->pos.x = (childTransform * glm::vec3(/*pos.x*/0.0f, 0.0f, 1.0f)).x;
       children.first[c]->pos.y = (childTransform * glm::vec3(0.0f, pos.y-1.0f, 1.0f)).y + drawHeight;
       drawHeight += children.first[c]->size.y*0.5f;
     } else
