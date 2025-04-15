@@ -88,6 +88,8 @@ uint8_t DragField::childNum()
 
 void DragField::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
 {
+  this->SCREEN = &SCREEN;
+
   if (transform == glm::mat3(0.0f))
   {
     transform = normalizationTransform(SCREEN);
