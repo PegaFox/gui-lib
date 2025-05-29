@@ -37,17 +37,17 @@ void Button::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
   bool currentlyPressed = false;
   if (getGlobalBounds().contains(sf::Vector2f(mPos.x, mPos.y)))
   {
-    body.shape[0].color = defaultInteractableColor * sf::Color(150, 150, 150);
-    body.shape[1].color = defaultInteractableColor * sf::Color(150, 150, 150);
-    body.shape[2].color = defaultInteractableColor * sf::Color(150, 150, 150);
-    body.shape[3].color = defaultInteractableColor * sf::Color(150, 150, 150);
+    body.shape[0].color = defaultInteractableColor * sf::Color(255 * 1.5f, 255 * 1.5f, 255 * 1.5f);
+    body.shape[1].color = defaultInteractableColor * sf::Color(255 * 1.5f, 255 * 1.5f, 255 * 1.5f);
+    body.shape[2].color = defaultInteractableColor * sf::Color(255 * 1.5f, 255 * 1.5f, 255 * 1.5f);
+    body.shape[3].color = defaultInteractableColor * sf::Color(255 * 1.5f, 255 * 1.5f, 255 * 1.5f);
 
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
     {
-      body.shape[0].color = defaultInteractableColor * sf::Color(80, 80, 80);
-      body.shape[1].color = defaultInteractableColor * sf::Color(80, 80, 80);
-      body.shape[2].color = defaultInteractableColor * sf::Color(80, 80, 80);
-      body.shape[3].color = defaultInteractableColor * sf::Color(80, 80, 80);
+      body.shape[0].color = defaultInteractableColor * sf::Color(255 * 0.8f, 255 * 0.8f, 255 * 0.8f);
+      body.shape[1].color = defaultInteractableColor * sf::Color(255 * 0.8f, 255 * 0.8f, 255 * 0.8f);
+      body.shape[2].color = defaultInteractableColor * sf::Color(255 * 0.8f, 255 * 0.8f, 255 * 0.8f);
+      body.shape[3].color = defaultInteractableColor * sf::Color(255 * 0.8f, 255 * 0.8f, 255 * 0.8f);
 
       currentlyPressed = true;
     }
