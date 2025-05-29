@@ -12,6 +12,11 @@ namespace pfui
   class GUIElement
   {
     public:
+      static sf::Color defaultBackgroundColor;
+      static sf::Color defaultObjectColor;
+      static sf::Color defaultBorderColor;
+      static sf::Color defaultInteractableColor;
+
       enum class ElementType
       {
         None,// this is for invalid states and should not be used regularly in-game

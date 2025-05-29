@@ -6,6 +6,12 @@
 
 using namespace pfui;
 
+// The color used for 
+sf::Color GUIElement::defaultBackgroundColor = sf::Color(150, 50, 0);
+sf::Color GUIElement::defaultObjectColor = sf::Color(100, 50, 0);
+sf::Color GUIElement::defaultBorderColor = sf::Color(150, 150, 100);
+sf::Color GUIElement::defaultInteractableColor = sf::Color(100, 100, 100);
+
 // must be called for all events in order for gui elements to be interactable
 void GUIElement::getEvent(const std::optional<sf::Event>& event)
 {
