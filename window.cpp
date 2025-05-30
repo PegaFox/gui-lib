@@ -429,6 +429,10 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
   if (close != 1.0f)
   {
     close *= 0.65f;
+    if (close < 0.01f)
+    {
+      close = 0.0f;
+    }
   }
 
   if (maximize > 0.0f)
