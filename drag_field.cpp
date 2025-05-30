@@ -9,10 +9,10 @@ DragField::DragField(const std::initializer_list<DragBox*>& children)
   type = ElementType::DragField;
 
   body.shape.setPrimitiveType(sf::PrimitiveType::TriangleFan);
-  body.shape.append(sf::Vertex{sf::Vector2f(-0.5f, -0.5f), sf::Color(100, 50, 0)});
-  body.shape.append(sf::Vertex{sf::Vector2f(-0.5f, 0.5f), sf::Color(100, 50, 0)});
-  body.shape.append(sf::Vertex{sf::Vector2f(0.5f, 0.5f), sf::Color(100, 50, 0)});
-  body.shape.append(sf::Vertex{sf::Vector2f(0.5f, -0.5f), sf::Color(100, 50, 0)});
+  body.shape.append(sf::Vertex{sf::Vector2f(-0.5f, -0.5f), defaultObjectColor});
+  body.shape.append(sf::Vertex{sf::Vector2f(-0.5f, 0.5f), defaultObjectColor});
+  body.shape.append(sf::Vertex{sf::Vector2f(0.5f, 0.5f), defaultObjectColor});
+  body.shape.append(sf::Vertex{sf::Vector2f(0.5f, -0.5f), defaultObjectColor});
 
   for (DragBox* child: children)
   {

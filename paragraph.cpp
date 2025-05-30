@@ -7,6 +7,7 @@ Paragraph::Paragraph()
   type = ElementType::Paragraph;
 
   text.setFont(font);
+  text.setFillColor(defaultObjectColor);
   text.setString("Hello, World!");
 }
 

@@ -7,10 +7,10 @@ DragBox::DragBox(const std::initializer_list<GUIElement*>& children)
   type = ElementType::DragBox;
 
   body.shape.setPrimitiveType(sf::PrimitiveType::TriangleFan);
-  body.shape.append(sf::Vertex{sf::Vector2f(-0.5f, -0.5f), sf::Color(150, 50, 0)});
-  body.shape.append(sf::Vertex{sf::Vector2f(-0.5f, 0.5f), sf::Color(150, 50, 0)});
-  body.shape.append(sf::Vertex{sf::Vector2f(0.5f, 0.5f), sf::Color(150, 50, 0)});
-  body.shape.append(sf::Vertex{sf::Vector2f(0.5f, -0.5f), sf::Color(150, 50, 0)});
+  body.shape.append(sf::Vertex{sf::Vector2f(-0.5f, -0.5f), defaultBackgroundColor});
+  body.shape.append(sf::Vertex{sf::Vector2f(-0.5f, 0.5f), defaultBackgroundColor});
+  body.shape.append(sf::Vertex{sf::Vector2f(0.5f, 0.5f), defaultBackgroundColor});
+  body.shape.append(sf::Vertex{sf::Vector2f(0.5f, -0.5f), defaultBackgroundColor});
 
   for (GUIElement* child: children)
   {

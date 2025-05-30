@@ -10,36 +10,36 @@ Window::Window(const std::initializer_list<GUIElement*>& children)
   type = ElementType::Window;
 
   body.shape.setPrimitiveType(sf::PrimitiveType::TriangleFan);
-  body.shape.append(sf::Vertex{sf::Vector2f(-0.5f, -0.5f), sf::Color(150, 50, 0)});
-  body.shape.append(sf::Vertex{sf::Vector2f(-0.5f, 0.5f), sf::Color(150, 50, 0)});
-  body.shape.append(sf::Vertex{sf::Vector2f(0.5f, 0.5f), sf::Color(150, 50, 0)});
-  body.shape.append(sf::Vertex{sf::Vector2f(0.5f, -0.5f), sf::Color(150, 50, 0)});
+  body.shape.append(sf::Vertex{sf::Vector2f(-0.5f, -0.5f), defaultBackgroundColor});
+  body.shape.append(sf::Vertex{sf::Vector2f(-0.5f, 0.5f), defaultBackgroundColor});
+  body.shape.append(sf::Vertex{sf::Vector2f(0.5f, 0.5f), defaultBackgroundColor});
+  body.shape.append(sf::Vertex{sf::Vector2f(0.5f, -0.5f), defaultBackgroundColor});
 
   titlebar.shape.setPrimitiveType(sf::PrimitiveType::TriangleFan);
-  titlebar.shape.append(sf::Vertex{sf::Vector2f(-0.5f, -0.5f), sf::Color(150, 150, 100)});
-  titlebar.shape.append(sf::Vertex{sf::Vector2f(-0.5f, 0.5f), sf::Color(150, 150, 100)});
-  titlebar.shape.append(sf::Vertex{sf::Vector2f(0.5f, 0.5f), sf::Color(150, 150, 100)});
-  titlebar.shape.append(sf::Vertex{sf::Vector2f(0.5f, -0.5f), sf::Color(150, 150, 100)});
+  titlebar.shape.append(sf::Vertex{sf::Vector2f(-0.5f, -0.5f), defaultBorderColor});
+  titlebar.shape.append(sf::Vertex{sf::Vector2f(-0.5f, 0.5f), defaultBorderColor});
+  titlebar.shape.append(sf::Vertex{sf::Vector2f(0.5f, 0.5f), defaultBorderColor});
+  titlebar.shape.append(sf::Vertex{sf::Vector2f(0.5f, -0.5f), defaultBorderColor});
   titlebar.size.y = 0.07f;
 
   closeSpr.shape.setPrimitiveType(sf::PrimitiveType::Lines);
-  closeSpr.shape.append(sf::Vertex{sf::Vector2f(-0.5f, -0.5f), sf::Color(100, 50, 0)});
-  closeSpr.shape.append(sf::Vertex{sf::Vector2f(0.5f, 0.5f), sf::Color(100, 50, 0)});
-  closeSpr.shape.append(sf::Vertex{sf::Vector2f(-0.5f, 0.5f), sf::Color(100, 50, 0)});
-  closeSpr.shape.append(sf::Vertex{sf::Vector2f(0.5f, -0.5f), sf::Color(100, 50, 0)});
+  closeSpr.shape.append(sf::Vertex{sf::Vector2f(-0.5f, -0.5f), defaultObjectColor});
+  closeSpr.shape.append(sf::Vertex{sf::Vector2f(0.5f, 0.5f), defaultObjectColor});
+  closeSpr.shape.append(sf::Vertex{sf::Vector2f(-0.5f, 0.5f), defaultObjectColor});
+  closeSpr.shape.append(sf::Vertex{sf::Vector2f(0.5f, -0.5f), defaultObjectColor});
   closeSpr.size = glm::vec2(0.05f);
 
   maximizeSpr.shape.setPrimitiveType(sf::PrimitiveType::LineStrip);
-  maximizeSpr.shape.append(sf::Vertex{sf::Vector2f(-0.5f, -0.5f), sf::Color(100, 50, 0)});
-  maximizeSpr.shape.append(sf::Vertex{sf::Vector2f(-0.5f, 0.5f), sf::Color(100, 50, 0)});
-  maximizeSpr.shape.append(sf::Vertex{sf::Vector2f(0.5f, 0.5f), sf::Color(100, 50, 0)});
-  maximizeSpr.shape.append(sf::Vertex{sf::Vector2f(0.5f, -0.5f), sf::Color(100, 50, 0)});
-  maximizeSpr.shape.append(sf::Vertex{sf::Vector2f(-0.5f, -0.5f), sf::Color(100, 50, 0)});
+  maximizeSpr.shape.append(sf::Vertex{sf::Vector2f(-0.5f, -0.5f), defaultObjectColor});
+  maximizeSpr.shape.append(sf::Vertex{sf::Vector2f(-0.5f, 0.5f), defaultObjectColor});
+  maximizeSpr.shape.append(sf::Vertex{sf::Vector2f(0.5f, 0.5f), defaultObjectColor});
+  maximizeSpr.shape.append(sf::Vertex{sf::Vector2f(0.5f, -0.5f), defaultObjectColor});
+  maximizeSpr.shape.append(sf::Vertex{sf::Vector2f(-0.5f, -0.5f), defaultObjectColor});
   maximizeSpr.size = glm::vec2(0.05f);
 
   minimizeSpr.shape.setPrimitiveType(sf::PrimitiveType::LineStrip);
-  minimizeSpr.shape.append(sf::Vertex{sf::Vector2f(-0.5f, 0.5f), sf::Color(100, 50, 0)});
-  minimizeSpr.shape.append(sf::Vertex{sf::Vector2f(0.5f, 0.5f), sf::Color(100, 50, 0)});
+  minimizeSpr.shape.append(sf::Vertex{sf::Vector2f(-0.5f, 0.5f), defaultObjectColor});
+  minimizeSpr.shape.append(sf::Vertex{sf::Vector2f(0.5f, 0.5f), defaultObjectColor});
   minimizeSpr.size = glm::vec2(0.05f);
 
   for (GUIElement* child: children)
