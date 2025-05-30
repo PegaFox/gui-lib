@@ -204,28 +204,28 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
     titlebar.pos = glm::vec2(modifiedPos.x, modifiedPos.y - modifiedSize.y*0.5f - titlebar.size.y*0.5f);
     titlebar.size.x = glm::mix(size.x, 2.0f, glm::abs(maximize))*close;
     titlebar.draw(SCREEN);
-  }
 
-  if (close == 1.0f)
-  {
-    float buttonOffset = titlebar.size.y*0.5f;
+    if (close == 1.0f)
+    {
+      float buttonOffset = titlebar.size.y*0.5f;
 
-    if (closeButton)
-    {
-      closeSpr.pos = glm::vec2(titlebar.pos.x+(titlebar.size.x*0.5f-buttonOffset), titlebar.pos.y);
-      closeSpr.draw(SCREEN);
-      buttonOffset += titlebar.size.y;
-    }
-    if (maximizeButton)
-    {
-      maximizeSpr.pos = glm::vec2(titlebar.pos.x+(titlebar.size.x*0.5f-buttonOffset), titlebar.pos.y);
-      maximizeSpr.draw(SCREEN);
-      buttonOffset += titlebar.size.y;
-    }
-    if (minimizeButton)
-    {
-      minimizeSpr.pos = glm::vec2(titlebar.pos.x+(titlebar.size.x*0.5f-buttonOffset), titlebar.pos.y);
-      minimizeSpr.draw(SCREEN);
+      if (closeButton)
+      {
+        closeSpr.pos = glm::vec2(titlebar.pos.x+(titlebar.size.x*0.5f-buttonOffset), titlebar.pos.y);
+        closeSpr.draw(SCREEN);
+        buttonOffset += titlebar.size.y;
+      }
+      if (maximizeButton)
+      {
+        maximizeSpr.pos = glm::vec2(titlebar.pos.x+(titlebar.size.x*0.5f-buttonOffset), titlebar.pos.y);
+        maximizeSpr.draw(SCREEN);
+        buttonOffset += titlebar.size.y;
+      }
+      if (minimizeButton)
+      {
+        minimizeSpr.pos = glm::vec2(titlebar.pos.x+(titlebar.size.x*0.5f-buttonOffset), titlebar.pos.y);
+        minimizeSpr.draw(SCREEN);
+      }
     }
   }
 
@@ -254,7 +254,7 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
 
   bool cursorChanged = false;
 
-  if (held == nullptr)
+  if (hasTitlebar && held == nullptr)
   {
     if (closeButton && closeSpr.getGlobalBounds().contains(sf::Vector2f(mPos.x, mPos.y)))
     {
