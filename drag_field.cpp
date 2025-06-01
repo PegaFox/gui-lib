@@ -125,7 +125,7 @@ void DragField::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
 
       std::shared_ptr<DragBox>* position = std::find(&children.first[0], &children.first[children.second], held);
 
-      if (position != &children.first[index])
+      if (index == (uint8_t)-1 || position != &children.first[index])
       {
         addChild(dynamic_pointer_cast<DragBox>(held), index);
       }
