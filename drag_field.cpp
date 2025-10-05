@@ -8,11 +8,9 @@ DragField::DragField(const std::initializer_list<DragBox*>& children)
 {
   type = ElementType::DragField;
 
-  body.shape.setPrimitiveType(sf::PrimitiveType::TriangleFan);
-  body.shape.append(sf::Vertex{sf::Vector2f(-0.5f, -0.5f), defaultObjectColor});
-  body.shape.append(sf::Vertex{sf::Vector2f(-0.5f, 0.5f), defaultObjectColor});
-  body.shape.append(sf::Vertex{sf::Vector2f(0.5f, 0.5f), defaultObjectColor});
-  body.shape.append(sf::Vertex{sf::Vector2f(0.5f, -0.5f), defaultObjectColor});
+  body.color = defaultObjectColor;
+  body.vertices.emplace_back(-0.5f, -0.5f);
+  body.vertices.emplace_back(0.5f, 0.5f);
 
   for (DragBox* child: children)
   {
@@ -86,24 +84,22 @@ uint8_t DragField::childNum()
   return children.second;
 }
 
-void DragField::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
+void DragField::draw(glm::mat3 transform)
 {
-  this->SCREEN = &SCREEN;
-
   if (transform == glm::mat3(0.0f))
   {
-    transform = normalizationTransform(SCREEN);
+    transform = normalizationTransform(glm::vec2(2.0f));
   }
 
   glm::mat3 invTransform = glm::inverse(transform);
   glm::mat3 fieldTransform = transform * glm::mat3(glm::vec3(size.x*0.5f, 0, 0), glm::vec3(0, size.y*0.5f, 0), glm::vec3(pos.x, pos.y, 1));
-  glm::mat3 childTransform = glm::inverse(normalizationTransform(SCREEN)) * fieldTransform;
+  glm::mat3 childTransform = glm::inverse(normalizationTransform(glm::vec2(2.0f))) * fieldTransform;
 
-  body.draw(SCREEN, fieldTransform);
+  body.draw(fieldTransform);
 
   if (held != nullptr && held->getType() == ElementType::DragBox)
   {
-    if (body.getGlobalBounds().contains(sf::Vector2f(mPos.x, mPos.y)))
+    if (body.getGlobalBounds().contains(mPos))
     {
       uint8_t index = -1;
       float yPos = body.getGlobalBounds().position.y;
@@ -155,23 +151,23 @@ void DragField::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
       break;
     }
 
-    if (held == nullptr && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && children.first[c]->getGlobalBounds().contains(sf::Vector2f(mPos.x, mPos.y)))
+    if (held == nullptr && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && children.first[c]->getGlobalBounds().contains(mPos))
     {
       held = children.first[c];
       resizeDirs.value = 0;
     }
 
-    if (held == nullptr && children.first[c].use_count() > 1 && !body.getGlobalBounds().contains(sf::Vector2f(mPos.x, mPos.y)))
+    if (held == nullptr && children.first[c].use_count() > 1 && !body.getGlobalBounds().contains(mPos))
     {
       removeChild(c);
     } else
     {
-      children.first[c]->draw(SCREEN);
+      children.first[c]->draw();
     }
   }
 
   // this goes after the draw step in case of a drag box containing a drag field
-  if (body.getGlobalBounds().contains(sf::Vector2f(mPos.x, mPos.y)))
+  if (body.getGlobalBounds().contains(mPos))
   {
     drawStart = glm::clamp((float)drawStart-scrollValue, 0.0f, (float)children.second-1);
     scrollValue = 0.0f;

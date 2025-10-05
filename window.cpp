@@ -1,45 +1,47 @@
 #include "window.hpp"
+#include <iostream>
 
-#include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Cursor.hpp>
 
 using namespace pfui;
 
 Window::Window(const std::initializer_list<GUIElement*>& children)
 {
-  type = ElementType::Window;
+  this->type = ElementType::Window;
 
-  body.shape.setPrimitiveType(sf::PrimitiveType::TriangleFan);
-  body.shape.append(sf::Vertex{sf::Vector2f(-0.5f, -0.5f), defaultBackgroundColor});
-  body.shape.append(sf::Vertex{sf::Vector2f(-0.5f, 0.5f), defaultBackgroundColor});
-  body.shape.append(sf::Vertex{sf::Vector2f(0.5f, 0.5f), defaultBackgroundColor});
-  body.shape.append(sf::Vertex{sf::Vector2f(0.5f, -0.5f), defaultBackgroundColor});
+  this->body.color = defaultBackgroundColor;
+  this->body.vertices.emplace_back(-0.5f, -0.5f);
+  this->body.vertices.emplace_back(0.5f, 0.5f);
 
-  titlebar.shape.setPrimitiveType(sf::PrimitiveType::TriangleFan);
-  titlebar.shape.append(sf::Vertex{sf::Vector2f(-0.5f, -0.5f), defaultBorderColor});
-  titlebar.shape.append(sf::Vertex{sf::Vector2f(-0.5f, 0.5f), defaultBorderColor});
-  titlebar.shape.append(sf::Vertex{sf::Vector2f(0.5f, 0.5f), defaultBorderColor});
-  titlebar.shape.append(sf::Vertex{sf::Vector2f(0.5f, -0.5f), defaultBorderColor});
-  titlebar.size.y = 0.07f;
+  this->titlebar.color = defaultBorderColor;
+  this->titlebar.vertices.emplace_back(-0.5f, -0.5f);
+  this->titlebar.vertices.emplace_back(0.5f, 0.5f);
+  this->titlebar.size.y = 0.07f;
 
-  closeSpr.shape.setPrimitiveType(sf::PrimitiveType::Lines);
-  closeSpr.shape.append(sf::Vertex{sf::Vector2f(-0.5f, -0.5f), defaultObjectColor});
-  closeSpr.shape.append(sf::Vertex{sf::Vector2f(0.5f, 0.5f), defaultObjectColor});
-  closeSpr.shape.append(sf::Vertex{sf::Vector2f(-0.5f, 0.5f), defaultObjectColor});
-  closeSpr.shape.append(sf::Vertex{sf::Vector2f(0.5f, -0.5f), defaultObjectColor});
-  closeSpr.size = glm::vec2(0.05f);
+  this->closeSpr.color = defaultObjectColor;
+  this->closeSpr.vertices.insert(closeSpr.vertices.end(), {
+    glm::vec2(-0.5f, -0.5f),
+    glm::vec2(0.5f, 0.5f),
+    glm::vec2(-0.5f, 0.5f),
+    glm::vec2(0.5f, -0.5f),
+  });
+  this->closeSpr.size = glm::vec2(0.05f);
 
-  maximizeSpr.shape.setPrimitiveType(sf::PrimitiveType::LineStrip);
-  maximizeSpr.shape.append(sf::Vertex{sf::Vector2f(-0.5f, -0.5f), defaultObjectColor});
-  maximizeSpr.shape.append(sf::Vertex{sf::Vector2f(-0.5f, 0.5f), defaultObjectColor});
-  maximizeSpr.shape.append(sf::Vertex{sf::Vector2f(0.5f, 0.5f), defaultObjectColor});
-  maximizeSpr.shape.append(sf::Vertex{sf::Vector2f(0.5f, -0.5f), defaultObjectColor});
-  maximizeSpr.shape.append(sf::Vertex{sf::Vector2f(-0.5f, -0.5f), defaultObjectColor});
+  this->maximizeSpr.color = defaultObjectColor;
+  this->maximizeSpr.vertices.insert(maximizeSpr.vertices.end(), {
+    glm::vec2(-0.5f, -0.5f),
+    glm::vec2(-0.5f, 0.5f),
+    glm::vec2(0.5f, 0.5f),
+    glm::vec2(0.5f, -0.5f),
+    glm::vec2(-0.5f, -0.5f),
+  });
   maximizeSpr.size = glm::vec2(0.05f);
 
-  minimizeSpr.shape.setPrimitiveType(sf::PrimitiveType::LineStrip);
-  minimizeSpr.shape.append(sf::Vertex{sf::Vector2f(-0.5f, 0.5f), defaultObjectColor});
-  minimizeSpr.shape.append(sf::Vertex{sf::Vector2f(0.5f, 0.5f), defaultObjectColor});
+  this->minimizeSpr.color = defaultObjectColor;
+  this->minimizeSpr.vertices.insert(minimizeSpr.vertices.end(), {
+    glm::vec2(-0.5f, 0.5f),
+    glm::vec2(0.5f, 0.5f),
+  });
   minimizeSpr.size = glm::vec2(0.05f);
 
   for (GUIElement* child: children)
@@ -117,20 +119,18 @@ uint8_t Window::childNum()
   return children.second;
 }
 
-sf::FloatRect Window::getGlobalBounds()
+Rect Window::getGlobalBounds()
 {
-  return sf::FloatRect(titlebar.getGlobalBounds().position, body.getGlobalBounds().size+sf::Vector2f(0.0f, titlebar.getGlobalBounds().size.y));
+  return Rect{titlebar.getGlobalBounds().position, body.getGlobalBounds().size+glm::vec2(0.0f, titlebar.getGlobalBounds().size.y)};
 }
 
-void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
+void Window::draw(glm::mat3 transform)
 {
-  this->SCREEN = &SCREEN;
-
   if (close == 0.0f) return;
 
   if (transform == glm::mat3(0.0f))
   {
-    transform = normalizationTransform(SCREEN);
+    transform = normalizationTransform(glm::vec2(2.0f));
   }
 
   //if (width.value < 0.0f) width.value = 0.0f;
@@ -191,7 +191,7 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
 
   glm::mat3 windowTransform = transform * glm::mat3(glm::vec3(modifiedSize.x*0.5f, 0, 0), glm::vec3(0, modifiedSize.y*0.5f, 0), glm::vec3(modifiedPos.x, modifiedPos.y, 1));
 
-  body.draw(SCREEN, windowTransform);
+  body.draw(windowTransform);
 
   /*
   size.x,      0, pos.x
@@ -202,8 +202,8 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
   if (hasTitlebar)
   {
     titlebar.pos = glm::vec2(modifiedPos.x, modifiedPos.y - modifiedSize.y*0.5f - titlebar.size.y*0.5f);
-    titlebar.size.x = glm::mix(size.x, 2.0f, glm::abs(maximize))*close;
-    titlebar.draw(SCREEN);
+    titlebar.size.x = modifiedSize.x;
+    titlebar.draw();
 
     if (close == 1.0f)
     {
@@ -212,19 +212,19 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
       if (closeButton)
       {
         closeSpr.pos = glm::vec2(titlebar.pos.x+(titlebar.size.x*0.5f-buttonOffset), titlebar.pos.y);
-        closeSpr.draw(SCREEN);
+        closeSpr.draw();
         buttonOffset += titlebar.size.y;
       }
       if (maximizeButton)
       {
         maximizeSpr.pos = glm::vec2(titlebar.pos.x+(titlebar.size.x*0.5f-buttonOffset), titlebar.pos.y);
-        maximizeSpr.draw(SCREEN);
+        maximizeSpr.draw();
         buttonOffset += titlebar.size.y;
       }
       if (minimizeButton)
       {
         minimizeSpr.pos = glm::vec2(titlebar.pos.x+(titlebar.size.x*0.5f-buttonOffset), titlebar.pos.y);
-        minimizeSpr.draw(SCREEN);
+        minimizeSpr.draw();
       }
     }
   }
@@ -249,21 +249,21 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
 
   for (uint8_t c = 0; c < children.second; c++)
   {
-    children.first[c]->draw(SCREEN, windowTransform);
+    children.first[c]->draw(windowTransform);
   }
 
   bool cursorChanged = false;
 
   if (hasTitlebar && held == nullptr)
   {
-    if (closeButton && closeSpr.getGlobalBounds().contains(sf::Vector2f(mPos.x, mPos.y)))
+    if (closeButton && closeSpr.getGlobalBounds().contains(mPos))
     {
-      if (dynamic_cast<sf::RenderWindow*>(this->SCREEN))
+      /*if (dynamic_cast<sf::RenderWindow*>(this->SCREEN))
       {
         sf::Cursor newCursor(sf::Cursor::Type::Hand);
         dynamic_cast<sf::RenderWindow*>(this->SCREEN)->setMouseCursor(newCursor);
         cursorChanged = true;
-      }
+      }*/
 
       if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
       {
@@ -271,14 +271,14 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
         maximize = -1;
       }
     }
-    if (maximizeButton && maximizeSpr.getGlobalBounds().contains(sf::Vector2f(mPos.x, mPos.y)))
+    if (maximizeButton && maximizeSpr.getGlobalBounds().contains(mPos))
     {
-      if (dynamic_cast<sf::RenderWindow*>(this->SCREEN))
+      /*jif (dynamic_cast<sf::RenderWindow*>(this->SCREEN))
       {
         sf::Cursor newCursor(sf::Cursor::Type::Hand);
         dynamic_cast<sf::RenderWindow*>(this->SCREEN)->setMouseCursor(newCursor);
         cursorChanged = true;
-      }
+      }*/
 
       if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
       {
@@ -287,17 +287,17 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
       }
     }
 
-    sf::FloatRect minimizeBounds = minimizeSpr.getGlobalBounds();
+    Rect minimizeBounds = minimizeSpr.getGlobalBounds();
     minimizeBounds.size.y = minimizeBounds.size.x;
     minimizeBounds.position.y -= minimizeBounds.size.y;
-    if (minimizeButton && minimizeBounds.contains(sf::Vector2f(mPos.x, mPos.y)))
+    if (minimizeButton && minimizeBounds.contains(mPos))
     {
-      if (dynamic_cast<sf::RenderWindow*>(this->SCREEN))
+      /*if (dynamic_cast<sf::RenderWindow*>(this->SCREEN))
       {
         sf::Cursor newCursor(sf::Cursor::Type::Hand);
         dynamic_cast<sf::RenderWindow*>(this->SCREEN)->setMouseCursor(newCursor);
         cursorChanged = true;
-      }
+      }*/
 
       if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
       {
@@ -309,20 +309,20 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
 
   if (resizeable && minimize == 1.0f && held == nullptr)
   {
-    const float resizeWidth = 2.0f;
-    sf::FloatRect bounds = body.getGlobalBounds();
+    const float resizeWidth = 0.02f; // the area around the edges of the window where clicking and dragging will resize it
+    Rect bounds = body.getGlobalBounds();
     float mouseLeftDis = glm::abs(mPos.x - bounds.position.x);
     float mouseRightDis = glm::abs(mPos.x - (bounds.position.x + bounds.size.x));
     float mouseTopDis = glm::abs(mPos.y - bounds.position.y);
     float mouseBottomDis = glm::abs(mPos.y - (bounds.position.y + bounds.size.y));
     if (mouseLeftDis < resizeWidth && mPos.y > bounds.position.y && mPos.y < bounds.position.y+bounds.size.y) // if left edge is grabbed
     {
-      if (dynamic_cast<sf::RenderWindow*>(this->SCREEN))
+      /*if (dynamic_cast<sf::RenderWindow*>(this->SCREEN))
       {
         sf::Cursor newCursor(sf::Cursor::Type::SizeLeft);
         dynamic_cast<sf::RenderWindow*>(this->SCREEN)->setMouseCursor(newCursor);
         cursorChanged = true;
-      }
+      }*/
 
       if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
       {
@@ -334,12 +334,12 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
       }
     } else if (mouseRightDis < resizeWidth && mPos.y > bounds.position.y && mPos.y < bounds.position.y+bounds.size.y) // if right edge is grabbed
     {
-      if (dynamic_cast<sf::RenderWindow*>(this->SCREEN))
+      /*if (dynamic_cast<sf::RenderWindow*>(this->SCREEN))
       {
         sf::Cursor newCursor(sf::Cursor::Type::SizeRight);
         dynamic_cast<sf::RenderWindow*>(this->SCREEN)->setMouseCursor(newCursor);
         cursorChanged = true;
-      }
+      }*/
 
       if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
       {
@@ -351,12 +351,12 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
       }
     } else if (mPos.x > bounds.position.x && mPos.x < bounds.position.x+bounds.size.x && mouseTopDis < resizeWidth) // if top edge is grabbed
     {
-      if (dynamic_cast<sf::RenderWindow*>(this->SCREEN))
+      /*if (dynamic_cast<sf::RenderWindow*>(this->SCREEN))
       {
         sf::Cursor newCursor(sf::Cursor::Type::SizeTop);
         dynamic_cast<sf::RenderWindow*>(this->SCREEN)->setMouseCursor(newCursor);
         cursorChanged = true;
-      }
+      }*/
   
       if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
       {
@@ -368,12 +368,12 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
       }
     } else if (mPos.x > bounds.position.x && mPos.x < bounds.position.x+bounds.size.x && mouseBottomDis < resizeWidth) // if bottom edge is grabbed
     {
-      if (dynamic_cast<sf::RenderWindow*>(this->SCREEN))
+      /*if (dynamic_cast<sf::RenderWindow*>(this->SCREEN))
       {
         sf::Cursor newCursor(sf::Cursor::Type::SizeBottom);
         dynamic_cast<sf::RenderWindow*>(this->SCREEN)->setMouseCursor(newCursor);
         cursorChanged = true;
-      }
+      }*/
 
       if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
       {
@@ -386,17 +386,20 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
     }
   }
 
-  if (isDraggable && held == nullptr && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && ((hasTitlebar && titlebar.getGlobalBounds().contains(sf::Vector2f(mPos.x, mPos.y))) || (!hasTitlebar && body.getGlobalBounds().contains(sf::Vector2f(mPos.x, mPos.y)))))
+  //std::cout << titlebar.getGlobalBounds().position.x << ", " << titlebar.getGlobalBounds().position.y << ", " << titlebar.getGlobalBounds().size.x << ", " << titlebar.getGlobalBounds().size.y << " | " << mPos.x << ", " << mPos.y << "\n";
+  //std::cout << isDraggable << ", " << (held == nullptr) << ", " << sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) << ", " << hasTitlebar << ", " << titlebar.getGlobalBounds().contains(mPos) << ", " << body.getGlobalBounds().contains(mPos) << "\n";
+
+  if (isDraggable && held == nullptr && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && ((hasTitlebar && titlebar.getGlobalBounds().contains(mPos)) || (!hasTitlebar && body.getGlobalBounds().contains(mPos))))
   {
     held.reset(this, HeldDeleter());
     resizeDirs.value = 0;
 
-    if (dynamic_cast<sf::RenderWindow*>(this->SCREEN))
+    /*if (dynamic_cast<sf::RenderWindow*>(this->SCREEN))
     {
       sf::Cursor newCursor(sf::Cursor::Type::SizeAll);
       dynamic_cast<sf::RenderWindow*>(this->SCREEN)->setMouseCursor(newCursor);
       cursorChanged = true;
-    }
+    }*/
   } else if (held.get() == this)
   {
     if (!sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
@@ -408,11 +411,11 @@ void Window::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
     }
   }
 
-  if (cursorChanged == false && dynamic_cast<sf::RenderWindow*>(this->SCREEN))
+  /*if (cursorChanged == false && dynamic_cast<sf::RenderWindow*>(this->SCREEN))
   {
     sf::Cursor newCursor(sf::Cursor::Type::Arrow);
     dynamic_cast<sf::RenderWindow*>(this->SCREEN)->setMouseCursor(newCursor);
-  }
+  }*/
 
   //keep window on-screen
   /*if (windowBind) {

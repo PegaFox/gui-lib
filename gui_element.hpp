@@ -1,21 +1,38 @@
 #ifndef PEGAFOX_GUI_LIB_GUI_ELEMENT_HPP
 #define PEGAFOX_GUI_LIB_GUI_ELEMENT_HPP
 
-#include <SFML/Graphics/RenderTarget.hpp>
+#include <memory>
+#include <optional>
 #include <SFML/Window/Event.hpp>
 #include <glm/vec2.hpp>
 #include <glm/mat3x3.hpp>
-#include <memory>
 
 namespace pfui
 {
+  typedef glm::vec4 Color;
+
+  typedef uint16_t FontID;
+
+  struct Rect
+  {
+    glm::vec2 position;
+    glm::vec2 size;
+
+    bool contains(glm::vec2 point) const;
+  };
+
   class GUIElement
   {
     public:
-      static sf::Color defaultBackgroundColor;
-      static sf::Color defaultObjectColor;
-      static sf::Color defaultBorderColor;
-      static sf::Color defaultInteractableColor;
+      static Color defaultBackgroundColor;
+      static Color defaultObjectColor;
+      static Color defaultBorderColor;
+      static Color defaultInteractableColor;
+
+      static void (*drawRect)(Rect rect, Color color);
+      static void (*drawLine)(glm::vec2 position1, glm::vec2 position2, Color color);
+      static void (*drawText)(FontID font, std::string text, glm::vec2 pos, float height, Color color);
+      static Rect (*getTextBounds)(FontID font, std::string text, glm::vec2 pos, float height);
 
       enum class ElementType
       {
@@ -34,12 +51,15 @@ namespace pfui
       // 0.0 to 2.0 coordinate representing size relative to render space
       glm::vec2 size = glm::vec2(2.0f);
 
-      // must be called for all events in order for gui elements to be interactable
-      static void getEvent(const std::optional<sf::Event>& event);
+      // must be called each time the mouse moves in order for gui elements to be interactable
+      static void updateCursor(glm::vec2 pos);
+
+      // must be called each time the mouse scroll wheel moves in order for scrolling to work properly
+      static void updateScrollWheel(float offset);
 
       ElementType getType();
 
-      virtual void draw(sf::RenderTarget& SCREEN, glm::mat3 transform = glm::mat3(0.0f)) = 0;
+      virtual void draw(glm::mat3 transform = glm::mat3(0.0f)) = 0;
     protected:
       struct HeldDeleter
       {
@@ -63,12 +83,11 @@ namespace pfui
 
       static std::shared_ptr<GUIElement> held;
       static ResizeDirs resizeDirs;
-      static sf::RenderTarget* SCREEN;
 
-      static glm::ivec2 mPos;
+      static glm::vec2 mPos;
       static float scrollValue;
 
-      static glm::mat3 normalizationTransform(sf::RenderTarget& SCREEN);
+      static glm::mat3 normalizationTransform(glm::vec2 viewportSize);
   };
 }
 

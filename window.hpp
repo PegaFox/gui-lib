@@ -47,16 +47,16 @@ namespace pfui
 
       uint8_t childNum();
 
-      sf::FloatRect getGlobalBounds();
+      Rect getGlobalBounds();
 
-      virtual void draw(sf::RenderTarget& SCREEN, glm::mat3 transform = glm::mat3(0.0f));
+      virtual void draw(glm::mat3 transform = glm::mat3(0.0f));
     private:
       std::pair<std::array<std::unique_ptr<GUIElement>, 32>, uint8_t> children;
-      VertexArray body;
-      VertexArray titlebar;
-      VertexArray closeSpr;
-      VertexArray maximizeSpr;
-      VertexArray minimizeSpr;
+      VertexArray body = VertexArray(VertexArray::Type::AABB);
+      VertexArray titlebar = VertexArray(VertexArray::Type::AABB);
+      VertexArray closeSpr = VertexArray(VertexArray::Type::Line);
+      VertexArray maximizeSpr = VertexArray(VertexArray::Type::LineStrip);
+      VertexArray minimizeSpr = VertexArray(VertexArray::Type::Line);
 
       float close = 1.0f;
       float maximize = 0.0f;

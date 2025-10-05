@@ -1,17 +1,17 @@
 #ifndef PEGAFOX_GUI_LIB_PARAGRAPH_HPP
 #define PEGAFOX_GUI_LIB_PARAGRAPH_HPP
 
-#include <SFML/Graphics/Font.hpp>
-#include <SFML/Graphics/Text.hpp>
 #include "gui_element.hpp"
 
 namespace pfui
 {
-  class Paragraph : public GUIElement
+  class Paragraph: public GUIElement
   {
     public:
-      static sf::Font font;
-      sf::Text text = sf::Text(font);
+      FontID font;
+      std::string text = "Hello, World!";
+      float textHeight = 2.0f;
+      Color color;
 
       bool scrollable = false;
       uint32_t drawStart = 0;
@@ -25,7 +25,7 @@ namespace pfui
   
       Paragraph();
   
-      virtual void draw(sf::RenderTarget& SCREEN, glm::mat3 transform = glm::mat3(0.0f));
+      virtual void draw(glm::mat3 transform = glm::mat3(0.0f));
     private:
   };
 }

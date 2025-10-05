@@ -5,24 +5,22 @@ using namespace pfui;
 Paragraph::Paragraph()
 {
   type = ElementType::Paragraph;
-
-  text.setFont(font);
-  text.setFillColor(defaultObjectColor);
-  text.setString("Hello, World!");
 }
 
-void Paragraph::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
+void Paragraph::draw(glm::mat3 transform)
 {
   if (transform == glm::mat3(0.0f))
   {
-    transform = normalizationTransform(SCREEN);
+    transform = normalizationTransform(glm::vec2(2.0f));
   }
   glm::mat3 invTransform = glm::inverse(transform);
 
   glm::vec2 projectedPos(transform * glm::vec3(pos, 1.0f));
   glm::vec2 projectedSize(transform * glm::vec3(size, 0.0f));
 
-  if (projectedSize.x == 0.0f || projectedSize.y == 0.0f)
+  float projectedHeight = (transform * glm::vec3(0.0f, this->textHeight, 0.0f)).y;
+
+  if (projectedSize.x == 0.0f || projectedSize.y == 0.0f || this->getTextBounds == nullptr)
   {
     return;
   }
@@ -50,11 +48,10 @@ void Paragraph::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
     newl = linePos;
   }*/
 
-  text.setCharacterSize(transform[1].y*2.0f);
-  text.setPosition(sf::Vector2f(projectedPos.x, projectedPos.y));
-  text.setScale(sf::Vector2f(projectedSize.x/(transform[1].y*2.0f), projectedSize.y/(transform[1].y*2.0f)));
+  //text.setCharacterSize(transform[1].y*2.0f);
+  //text.setScale(sf::Vector2f(projectedSize.x/(transform[1].y*2.0f), projectedSize.y/(transform[1].y*2.0f)));
 
-  const std::string originalStr = text.getString();
+  const std::string originalStr = this->text;
   std::string paragraphStr = originalStr;
 
   if (scrollable)
@@ -67,31 +64,26 @@ void Paragraph::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
     paragraphStr.erase(0, pos);
   }
 
-  sf::FloatRect bounds;
-  glm::vec2 boundsPos;
-  glm::vec2 boundsSize;
+  Rect bounds;
   switch (wrapMode)
   {
     case WrapMode::None:
       for (std::size_t pos = paragraphStr.size(); pos > 0; pos--)
       {
-        text.setString(paragraphStr.substr(0, pos));
+        text = paragraphStr.substr(0, pos);
 
-        bounds = text.getGlobalBounds();
+        bounds = this->getTextBounds(this->font, this->text, projectedPos, this->textHeight);
 
-        boundsPos = glm::vec2(bounds.position.x, bounds.position.y);
-        boundsSize = glm::vec2(bounds.size.x, bounds.size.y);
+        bounds.position = invTransform * glm::vec3(bounds.position, 1.0f);
+        bounds.size = invTransform * glm::vec3(bounds.size, 0.0f);
 
-        boundsPos = invTransform * glm::vec3(boundsPos, 1.0f);
-        boundsSize = invTransform * glm::vec3(boundsSize, 0.0f);
-
-        if (boundsPos.x+boundsSize.x <= 1.0f)
+        if (bounds.position.x+bounds.size.x <= 1.0f)
         {
           break;
         }
       }
 
-      if (boundsPos.y+boundsSize.y > 1.0f)
+      if (bounds.position.y+bounds.size.y > 1.0f)
       {
         //text.setString("");
       }
@@ -101,20 +93,17 @@ void Paragraph::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
       {
         for (std::size_t i = paragraphStr.size(); i >= pos; i--)
         {
-          text.setString(paragraphStr.substr(pos, i-pos));
-          if (text.getString()[0] == '\n')
+          text = paragraphStr.substr(pos, i-pos);
+          if (text[0] == '\n')
           {
             pos = -1;
             break;
           }
 
-          bounds = text.getGlobalBounds();
+          bounds = this->getTextBounds(this->font, this->text, projectedPos, this->textHeight);
 
-          boundsPos = glm::vec2(bounds.position.x, bounds.position.y);
-          boundsSize = glm::vec2(bounds.size.x, bounds.size.y);
-
-          boundsPos = invTransform * glm::vec3(boundsPos, 1.0f);
-          boundsSize = invTransform * glm::vec3(boundsSize, 0.0f);
+          bounds.position = invTransform * glm::vec3(bounds.position, 0.0f);
+          bounds.size = invTransform * glm::vec3(bounds.size, 0.0f);
 
           if (i == pos)
           {
@@ -122,7 +111,7 @@ void Paragraph::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
             break;
           }
 
-          if (boundsPos.x+boundsSize.x <= 1.0f)
+          if (bounds.position.x+bounds.size.x <= 1.0f)
           {
             if (paragraphStr[i] == ' ')
             {
@@ -134,30 +123,27 @@ void Paragraph::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
           }
         }
       }
-      text.setString(paragraphStr);
+      text = paragraphStr;
 
       for (std::size_t i = paragraphStr.size(); i != -1; i = paragraphStr.rfind('\n', i-1))
       {
-        text.setString(paragraphStr.substr(0, i));
+        text = paragraphStr.substr(0, i);
 
-        bounds = text.getGlobalBounds();
+        bounds = this->getTextBounds(this->font, this->text, projectedPos, this->textHeight);
 
-        boundsPos = glm::vec2(bounds.position.x, bounds.position.y);
-        boundsSize = glm::vec2(bounds.size.x, bounds.size.y);
+        bounds.position = invTransform * glm::vec3(bounds.position, 0.0f);
+        bounds.size = invTransform * glm::vec3(bounds.size, 0.0f);
 
-        boundsPos = invTransform * glm::vec3(boundsPos, 1.0f);
-        boundsSize = invTransform * glm::vec3(boundsSize, 0.0f);
-
-        if (boundsPos.y+boundsSize.y <= 1.0f)
+        if (bounds.position.y+bounds.size.y <= 1.0f)
         {
           paragraphStr.erase(i);
           break;
         }
       }
 
-      if (boundsPos.x+boundsSize.x > 1.0f || boundsPos.y+boundsSize.y > 1.0f)
+      if (bounds.position.x+bounds.size.x > 1.0f || bounds.position.y+bounds.size.y > 1.0f)
       {
-        text.setString("");
+        text = "";
       }
       break;
     case WrapMode::WordWrap:
@@ -172,17 +158,14 @@ void Paragraph::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
             break;
           }
 
-          text.setString(paragraphStr.substr(pos, i-pos));
+          text = paragraphStr.substr(pos, i-pos);
 
-          bounds = text.getGlobalBounds();
+          bounds = this->getTextBounds(this->font, this->text, projectedPos, projectedHeight);
 
-          boundsPos = glm::vec2(bounds.position.x, bounds.position.y);
-          boundsSize = glm::vec2(bounds.size.x, bounds.size.y);
+          bounds.position = invTransform * glm::vec3(bounds.position, 1.0f);
+          bounds.size = invTransform * glm::vec3(bounds.size, 0.0f);
 
-          boundsPos = invTransform * glm::vec3(boundsPos, 1.0f);
-          boundsSize = invTransform * glm::vec3(boundsSize, 0.0f);
-
-          if (boundsPos.x+boundsSize.x <= 1.0f)
+          if (bounds.position.x+bounds.size.x <= 1.0f)
           {
             paragraphStr[i] = '\n';
             pos = i;
@@ -190,43 +173,41 @@ void Paragraph::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
           }
         }
       }
-      text.setString(paragraphStr);
+      text = paragraphStr;
 
       for (std::size_t i = paragraphStr.size(); i > 0; i = paragraphStr.rfind('\n', i-1))
       {
-        text.setString(paragraphStr.substr(0, i));
+        text = paragraphStr.substr(0, i);
 
-        bounds = text.getGlobalBounds();
+        bounds = this->getTextBounds(this->font, this->text, projectedPos, projectedHeight);
 
-        boundsPos = glm::vec2(bounds.position.x, bounds.position.y);
-        boundsSize = glm::vec2(bounds.size.x, bounds.size.y);
+        bounds.position = invTransform * glm::vec3(bounds.position, 1.0f);
+        bounds.size = invTransform * glm::vec3(bounds.size, 0.0f);
 
-        boundsPos = invTransform * glm::vec3(boundsPos, 1.0f);
-        boundsSize = invTransform * glm::vec3(boundsSize, 0.0f);
-
-        if (boundsPos.y+boundsSize.y <= 1.0f)
+        if (bounds.position.y+bounds.size.y <= 1.0f)
         {
           paragraphStr.erase(i);
           break;
         }
       }
 
-      if (boundsPos.x+boundsSize.x > 1.0f || boundsPos.y+boundsSize.y > 1.0f)
+      if (bounds.position.x+bounds.size.x > 1.0f || bounds.position.y+bounds.size.y > 1.0f)
       {
-        text.setString("");
+        text = "";
       }
       break;
   }
 
-  SCREEN.draw(text);
+  if (this->drawText != nullptr)
+  {
+    this->drawText(this->font, this->text, projectedPos, projectedHeight, this->color);
+  }
 
-  if (scrollable && text.getGlobalBounds().contains(sf::Vector2f(mPos.x, mPos.y)))
+  if (scrollable && this->getTextBounds(this->font, this->text, projectedPos, this->textHeight).contains(mPos))
   {
     drawStart = glm::clamp((float)drawStart-scrollValue, 0.0f, (float)originalStr.size());
     scrollValue = 0.0f;
   }
 
-  text.setString(originalStr);
+  text = originalStr;
 }
-
-sf::Font Paragraph::font;

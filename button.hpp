@@ -15,13 +15,13 @@ namespace pfui
 
       bool isPressed();
 
-      sf::FloatRect getGlobalBounds();
+      Rect getGlobalBounds();
 
-      virtual void draw(sf::RenderTarget& SCREEN, glm::mat3 transform = glm::mat3(0.0f));
+      virtual void draw(glm::mat3 transform = glm::mat3(0.0f));
     private:
       bool pressed = false;
 
-      VertexArray body;
+      VertexArray body = VertexArray(VertexArray::Type::AABB);
   };
 }
 

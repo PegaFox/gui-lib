@@ -6,11 +6,9 @@ DragBox::DragBox(const std::initializer_list<GUIElement*>& children)
 {
   type = ElementType::DragBox;
 
-  body.shape.setPrimitiveType(sf::PrimitiveType::TriangleFan);
-  body.shape.append(sf::Vertex{sf::Vector2f(-0.5f, -0.5f), defaultBackgroundColor});
-  body.shape.append(sf::Vertex{sf::Vector2f(-0.5f, 0.5f), defaultBackgroundColor});
-  body.shape.append(sf::Vertex{sf::Vector2f(0.5f, 0.5f), defaultBackgroundColor});
-  body.shape.append(sf::Vertex{sf::Vector2f(0.5f, -0.5f), defaultBackgroundColor});
+  body.color = defaultBackgroundColor;
+  body.vertices.emplace_back(-0.5f, -0.5f);
+  body.vertices.emplace_back(0.5f, 0.5f);
 
   for (GUIElement* child: children)
   {
@@ -54,26 +52,27 @@ uint8_t DragBox::childNum()
   return children.second;
 }
 
-sf::FloatRect DragBox::getGlobalBounds()
+Rect DragBox::getGlobalBounds()
 {
   return body.getGlobalBounds();
 }
 
-void DragBox::draw(sf::RenderTarget& SCREEN, glm::mat3 transform)
+void DragBox::draw(glm::mat3 transform)
 {
   if (transform == glm::mat3(0.0f))
   {
-    transform = normalizationTransform(SCREEN);
+    transform = normalizationTransform(glm::vec2(2.0f));
   }
 
   glm::mat3 invTransform = glm::inverse(transform);
   glm::mat3 fieldTransform = transform * glm::mat3(glm::vec3(size.x*0.5f, 0, 0), glm::vec3(0, size.y*0.5f, 0), glm::vec3(pos.x, pos.y, 1));
-  glm::mat3 childTransform = glm::inverse(normalizationTransform(SCREEN)) * fieldTransform;
+  glm::mat3 childTransform = glm::inverse(normalizationTransform(glm::vec2(2.0f))) * fieldTransform;
 
-  body.draw(SCREEN, fieldTransform);
+  body.draw(fieldTransform);
 
   for (uint8_t c = 0; c < children.second; c++)
   {
-    children.first[c]->draw(SCREEN, fieldTransform);
+    //children.first[c]->draw(childTransform);
+    children.first[c]->draw(fieldTransform);
   }
 }
