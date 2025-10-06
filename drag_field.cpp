@@ -6,8 +6,6 @@ using namespace pfui;
 
 DragField::DragField(const std::initializer_list<DragBox*>& children)
 {
-  type = ElementType::DragField;
-
   body.color = defaultObjectColor;
   body.vertices.emplace_back(-0.5f, -0.5f);
   body.vertices.emplace_back(0.5f, 0.5f);
@@ -84,7 +82,12 @@ uint8_t DragField::childNum()
   return children.second;
 }
 
-void DragField::draw(glm::mat3 transform)
+GUIElement::ElementType DragField::getType()
+{
+  return ElementType::DragField;
+}
+
+void DragField::draw()
 {
   if (transform == glm::mat3(0.0f))
   {
@@ -95,7 +98,8 @@ void DragField::draw(glm::mat3 transform)
   glm::mat3 fieldTransform = transform * glm::mat3(glm::vec3(size.x*0.5f, 0, 0), glm::vec3(0, size.y*0.5f, 0), glm::vec3(pos.x, pos.y, 1));
   glm::mat3 childTransform = glm::inverse(normalizationTransform(glm::vec2(2.0f))) * fieldTransform;
 
-  body.draw(fieldTransform);
+  body.transform = fieldTransform;
+  body.draw();
 
   if (held != nullptr && held->getType() == ElementType::DragBox)
   {
@@ -151,7 +155,7 @@ void DragField::draw(glm::mat3 transform)
       break;
     }
 
-    if (held == nullptr && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && children.first[c]->getGlobalBounds().contains(mPos))
+    if (held == nullptr && this->mPressed.states.left && children.first[c]->getGlobalBounds().contains(mPos))
     {
       held = children.first[c];
       resizeDirs.value = 0;
@@ -173,7 +177,7 @@ void DragField::draw(glm::mat3 transform)
     scrollValue = 0.0f;
   }
 
-  if (!sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+  if (!this->mPressed.states.left)
   {
     held = nullptr;
   }

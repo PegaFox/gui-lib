@@ -4,7 +4,6 @@ using namespace pfui;
 
 VertexArray::VertexArray(Type renderType)
 {
-  this->type = ElementType::VertexArray;
   this->renderType = renderType;
 }
 
@@ -13,7 +12,12 @@ Rect VertexArray::getGlobalBounds()
   return this->globalBounds;
 }
 
-void VertexArray::draw(glm::mat3 transform)
+GUIElement::ElementType VertexArray::getType()
+{
+  return ElementType::VertexArray;
+}
+
+void VertexArray::draw()
 {
   if (transform == glm::mat3(0.0f))
   {

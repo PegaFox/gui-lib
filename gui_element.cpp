@@ -1,6 +1,4 @@
 #include "gui_element.hpp"
-#include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/Window/Event.hpp>
 #include <glm/vec2.hpp>
 #include <glm/mat3x3.hpp>
 
@@ -61,15 +59,16 @@ void GUIElement::updateCursor(glm::vec2 pos)
   mPos = pos;
 }
 
+// must be called each time a mouse button is pressed or released in order for gui elements to be interactable
+void GUIElement::updateMouseButtons(MouseButtons buttonStates)
+{
+  mPressed.states = buttonStates;
+}
+
 // must be called each time the mouse scroll wheel moves in order for scrolling to work properly
 void GUIElement::updateScrollWheel(float offset)
 {
   scrollValue += offset;
-}
-
-GUIElement::ElementType GUIElement::getType()
-{
-  return type;
 }
 
 glm::mat3 GUIElement::normalizationTransform(glm::vec2 viewportSize)
@@ -88,5 +87,6 @@ glm::mat3 GUIElement::normalizationTransform(glm::vec2 viewportSize)
 std::shared_ptr<GUIElement> GUIElement::held = nullptr;
 GUIElement::ResizeDirs GUIElement::resizeDirs;
 
+GUIElement::MouseButtonField GUIElement::mPressed = {0};
 glm::vec2 GUIElement::mPos(0.0f);
 float  GUIElement::scrollValue = 0.0f;

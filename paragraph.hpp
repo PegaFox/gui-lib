@@ -22,10 +22,10 @@ namespace pfui
         LetterWrap,
         WordWrap
       } wrapMode = WrapMode::WordWrap;
+
+      ElementType getType() override;
   
-      Paragraph();
-  
-      virtual void draw(glm::mat3 transform = glm::mat3(0.0f));
+      void draw() override;
     private:
   };
 }

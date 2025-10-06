@@ -17,7 +17,9 @@ namespace pfui
 
       Rect getGlobalBounds();
 
-      virtual void draw(glm::mat3 transform = glm::mat3(0.0f));
+      ElementType getType() override;
+
+      void draw() override;
     private:
       bool pressed = false;
 

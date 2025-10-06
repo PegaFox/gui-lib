@@ -3,7 +3,6 @@
 
 #include <memory>
 #include <optional>
-#include <SFML/Window/Event.hpp>
 #include <glm/vec2.hpp>
 #include <glm/mat3x3.hpp>
 
@@ -19,6 +18,15 @@ namespace pfui
     glm::vec2 size;
 
     bool contains(glm::vec2 point) const;
+  };
+
+  struct MouseButtons
+  {
+    bool left: 1;
+    bool middle: 1;
+    bool right: 1;
+    bool extra1: 1;
+    bool extra2: 1;
   };
 
   class GUIElement
@@ -45,6 +53,8 @@ namespace pfui
         DragBox
       };
 
+      glm::mat3 transform = glm::mat3(1.0f);
+
       // normalized, -1.0 to 1.0 range coordinate
       glm::vec2 pos = glm::vec2(0.0f);
 
@@ -54,12 +64,15 @@ namespace pfui
       // must be called each time the mouse moves in order for gui elements to be interactable
       static void updateCursor(glm::vec2 pos);
 
+      // must be called each time a mouse button is pressed or released in order for gui elements to be interactable
+      static void updateMouseButtons(MouseButtons buttonStates);
+
       // must be called each time the mouse scroll wheel moves in order for scrolling to work properly
       static void updateScrollWheel(float offset);
 
-      ElementType getType();
+      virtual ElementType getType() = 0;
 
-      virtual void draw(glm::mat3 transform = glm::mat3(0.0f)) = 0;
+      virtual void draw() = 0;
     protected:
       struct HeldDeleter
       {
@@ -68,8 +81,6 @@ namespace pfui
           return;
         }
       };
-
-      ElementType type;
 
       union ResizeDirs {
         struct Flags {
@@ -84,6 +95,7 @@ namespace pfui
       static std::shared_ptr<GUIElement> held;
       static ResizeDirs resizeDirs;
 
+      static union MouseButtonField {MouseButtons states; uint8_t value;} mPressed;
       static glm::vec2 mPos;
       static float scrollValue;
 

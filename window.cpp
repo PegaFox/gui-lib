@@ -7,8 +7,6 @@ using namespace pfui;
 
 Window::Window(const std::initializer_list<GUIElement*>& children)
 {
-  this->type = ElementType::Window;
-
   this->body.color = defaultBackgroundColor;
   this->body.vertices.emplace_back(-0.5f, -0.5f);
   this->body.vertices.emplace_back(0.5f, 0.5f);
@@ -124,7 +122,12 @@ Rect Window::getGlobalBounds()
   return Rect{titlebar.getGlobalBounds().position, body.getGlobalBounds().size+glm::vec2(0.0f, titlebar.getGlobalBounds().size.y)};
 }
 
-void Window::draw(glm::mat3 transform)
+GUIElement::ElementType Window::getType()
+{
+  return ElementType::Window;
+}
+
+void Window::draw()
 {
   if (close == 0.0f) return;
 
@@ -191,7 +194,8 @@ void Window::draw(glm::mat3 transform)
 
   glm::mat3 windowTransform = transform * glm::mat3(glm::vec3(modifiedSize.x*0.5f, 0, 0), glm::vec3(0, modifiedSize.y*0.5f, 0), glm::vec3(modifiedPos.x, modifiedPos.y, 1));
 
-  body.draw(windowTransform);
+  body.transform = windowTransform;
+  body.draw();
 
   /*
   size.x,      0, pos.x
@@ -249,7 +253,8 @@ void Window::draw(glm::mat3 transform)
 
   for (uint8_t c = 0; c < children.second; c++)
   {
-    children.first[c]->draw(windowTransform);
+    children.first[c]->transform = windowTransform;
+    children.first[c]->draw();
   }
 
   bool cursorChanged = false;
@@ -265,7 +270,7 @@ void Window::draw(glm::mat3 transform)
         cursorChanged = true;
       }*/
 
-      if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+      if (this->mPressed.states.left)
       {
         setOpen(false);
         maximize = -1;
@@ -280,7 +285,7 @@ void Window::draw(glm::mat3 transform)
         cursorChanged = true;
       }*/
 
-      if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+      if (this->mPressed.states.left)
       {
         setMinimize(false);
         setMaximize(!isMaximized());
@@ -299,7 +304,7 @@ void Window::draw(glm::mat3 transform)
         cursorChanged = true;
       }*/
 
-      if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+      if (this->mPressed.states.left)
       {
         setMaximize(false);
         setMinimize(!isMinimized());
@@ -324,7 +329,7 @@ void Window::draw(glm::mat3 transform)
         cursorChanged = true;
       }*/
 
-      if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+      if (this->mPressed.states.left)
       {
         held.reset(this, HeldDeleter());
         resizeDirs.flags.left = true;
@@ -341,7 +346,7 @@ void Window::draw(glm::mat3 transform)
         cursorChanged = true;
       }*/
 
-      if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+      if (this->mPressed.states.left)
       {
         held.reset(this, HeldDeleter());
         resizeDirs.flags.left = false;
@@ -358,7 +363,7 @@ void Window::draw(glm::mat3 transform)
         cursorChanged = true;
       }*/
   
-      if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+      if (this->mPressed.states.left)
       {
         held.reset(this, HeldDeleter());
         resizeDirs.flags.left = false;
@@ -375,7 +380,7 @@ void Window::draw(glm::mat3 transform)
         cursorChanged = true;
       }*/
 
-      if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+      if (this->mPressed.states.left)
       {
         held.reset(this, HeldDeleter());
         resizeDirs.flags.left = false;
@@ -389,7 +394,7 @@ void Window::draw(glm::mat3 transform)
   //std::cout << titlebar.getGlobalBounds().position.x << ", " << titlebar.getGlobalBounds().position.y << ", " << titlebar.getGlobalBounds().size.x << ", " << titlebar.getGlobalBounds().size.y << " | " << mPos.x << ", " << mPos.y << "\n";
   //std::cout << isDraggable << ", " << (held == nullptr) << ", " << sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) << ", " << hasTitlebar << ", " << titlebar.getGlobalBounds().contains(mPos) << ", " << body.getGlobalBounds().contains(mPos) << "\n";
 
-  if (isDraggable && held == nullptr && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && ((hasTitlebar && titlebar.getGlobalBounds().contains(mPos)) || (!hasTitlebar && body.getGlobalBounds().contains(mPos))))
+  if (isDraggable && held == nullptr && this->mPressed.states.left && ((hasTitlebar && titlebar.getGlobalBounds().contains(mPos)) || (!hasTitlebar && body.getGlobalBounds().contains(mPos))))
   {
     held.reset(this, HeldDeleter());
     resizeDirs.value = 0;
@@ -402,7 +407,7 @@ void Window::draw(glm::mat3 transform)
     }*/
   } else if (held.get() == this)
   {
-    if (!sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+    if (!this->mPressed.states.left)
     {
       held = nullptr;
     } else

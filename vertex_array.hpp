@@ -23,10 +23,11 @@ namespace pfui
 
       VertexArray(Type renderType = Type::AABB);
 
-      // this is for getting the transformed shape; for local bounds, use this->shape.getBounds()
       Rect getGlobalBounds();
 
-      virtual void draw(glm::mat3 transform = glm::mat3(0.0f));
+      ElementType getType() override;
+
+      void draw() override;
     private:
       Rect globalBounds;
   };

@@ -4,8 +4,6 @@ using namespace pfui;
 
 Button::Button()
 {
-  type = ElementType::Button;
-
   body.color = defaultInteractableColor;
   body.vertices.emplace_back(-0.5f, -0.5f);
   body.vertices.emplace_back(0.5f, 0.5f);
@@ -21,7 +19,12 @@ Rect Button::getGlobalBounds()
   return body.getGlobalBounds();
 }
 
-void Button::draw(glm::mat3 transform)
+GUIElement::ElementType Button::getType()
+{
+  return ElementType::Button;
+}
+
+void Button::draw()
 {
   if (transform == glm::mat3(0.0f))
   {
@@ -30,7 +33,8 @@ void Button::draw(glm::mat3 transform)
 
   body.pos = pos;
   body.size = size;
-  body.draw(transform);
+  body.transform = transform;
+  body.draw();
 
   body.color = defaultInteractableColor;
 
@@ -39,7 +43,7 @@ void Button::draw(glm::mat3 transform)
   {
     body.color = defaultInteractableColor * 1.5f;
 
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+    if (this->mPressed.states.left)
     {
       body.color = defaultInteractableColor * 0.8f;
 

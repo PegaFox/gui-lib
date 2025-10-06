@@ -2,12 +2,12 @@
 
 using namespace pfui;
 
-Paragraph::Paragraph()
+GUIElement::ElementType Paragraph::getType()
 {
-  type = ElementType::Paragraph;
+  return ElementType::Paragraph;
 }
 
-void Paragraph::draw(glm::mat3 transform)
+void Paragraph::draw()
 {
   if (transform == glm::mat3(0.0f))
   {

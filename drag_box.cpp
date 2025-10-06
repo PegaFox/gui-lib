@@ -4,8 +4,6 @@ using namespace pfui;
 
 DragBox::DragBox(const std::initializer_list<GUIElement*>& children)
 {
-  type = ElementType::DragBox;
-
   body.color = defaultBackgroundColor;
   body.vertices.emplace_back(-0.5f, -0.5f);
   body.vertices.emplace_back(0.5f, 0.5f);
@@ -57,7 +55,12 @@ Rect DragBox::getGlobalBounds()
   return body.getGlobalBounds();
 }
 
-void DragBox::draw(glm::mat3 transform)
+GUIElement::ElementType DragBox::getType()
+{
+  return ElementType::DragBox;
+}
+
+void DragBox::draw()
 {
   if (transform == glm::mat3(0.0f))
   {
@@ -68,11 +71,14 @@ void DragBox::draw(glm::mat3 transform)
   glm::mat3 fieldTransform = transform * glm::mat3(glm::vec3(size.x*0.5f, 0, 0), glm::vec3(0, size.y*0.5f, 0), glm::vec3(pos.x, pos.y, 1));
   glm::mat3 childTransform = glm::inverse(normalizationTransform(glm::vec2(2.0f))) * fieldTransform;
 
-  body.draw(fieldTransform);
+  body.transform = fieldTransform;
+  body.draw();
 
   for (uint8_t c = 0; c < children.second; c++)
   {
-    //children.first[c]->draw(childTransform);
-    children.first[c]->draw(fieldTransform);
+    //children.first[c]->transform = childTransform;
+    children.first[c]->transform = fieldTransform;
+
+    children.first[c]->draw();
   }
 }
