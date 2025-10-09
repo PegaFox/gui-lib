@@ -7,12 +7,12 @@ VertexArray::VertexArray(Type renderType)
   this->renderType = renderType;
 }
 
-Rect VertexArray::getGlobalBounds()
+Rect VertexArray::getGlobalBounds() const 
 {
   return this->globalBounds;
 }
 
-GUIElement::ElementType VertexArray::getType()
+GUIElement::ElementType VertexArray::getType() const
 {
   return ElementType::VertexArray;
 }

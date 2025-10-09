@@ -70,7 +70,9 @@ namespace pfui
       // must be called each time the mouse scroll wheel moves in order for scrolling to work properly
       static void updateScrollWheel(float offset);
 
-      virtual ElementType getType() = 0;
+      virtual Rect getGlobalBounds() const = 0;
+
+      virtual ElementType getType() const = 0;
 
       virtual void draw() = 0;
     protected:

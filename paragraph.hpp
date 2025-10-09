@@ -23,7 +23,9 @@ namespace pfui
         WordWrap
       } wrapMode = WrapMode::WordWrap;
 
-      ElementType getType() override;
+      Rect getGlobalBounds() const override;
+
+      ElementType getType() const override;
   
       void draw() override;
     private:

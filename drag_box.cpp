@@ -4,35 +4,45 @@ using namespace pfui;
 
 DragBox::DragBox(const std::initializer_list<GUIElement*>& children)
 {
-  body.color = defaultBackgroundColor;
-  body.vertices.emplace_back(-0.5f, -0.5f);
-  body.vertices.emplace_back(0.5f, 0.5f);
+  init(children.begin(), children.end());
+}
 
-  for (GUIElement* child: children)
-  {
-    this->children.first[this->children.second++].reset(child);
-  }
+DragBox::DragBox(GUIElement* const * childrenBegin, GUIElement* const * childrenEnd)
+{
+  init(childrenBegin, childrenEnd);
 }
 
 GUIElement* DragBox::addChild(GUIElement* child, uint8_t index)
 {
-  if (children.second == 32)
+  if (index == uint8_t(-1))
+  {
+    index = children.second;
+  }
+
+  if (children.second == 32 || index > children.second)
   {
     return nullptr;
   }
 
-  children.first[children.second++].reset(child);
-  return children.first[children.second-1].get();
+  std::move_backward(&children.first[index], &children.first[children.second++], &children.first[index+1]);
+  children.first[index].reset(child);
+  return children.first[index].get();
 }
 
 bool DragBox::removeChild(uint8_t index)
 {
-  if (children.second == 0)
+  if (index == uint8_t(-1))
+  {
+    index = children.second-1;
+  }
+
+  if (index >= children.second)
   {
     return false;
   }
 
-  children.first[--children.second].reset();
+  children.first[index].reset();
+  std::move(&children.first[index+1], &children.first[children.second--], &children.first[index]);
   return true;
 }
 
@@ -45,17 +55,17 @@ GUIElement* DragBox::operator[](uint8_t index)
   return nullptr;
 }
 
-uint8_t DragBox::childNum()
+uint8_t DragBox::childCount() const
 {
   return children.second;
 }
 
-Rect DragBox::getGlobalBounds()
+Rect DragBox::getGlobalBounds() const
 {
   return body.getGlobalBounds();
 }
 
-GUIElement::ElementType DragBox::getType()
+GUIElement::ElementType DragBox::getType() const
 {
   return ElementType::DragBox;
 }
@@ -80,5 +90,17 @@ void DragBox::draw()
     children.first[c]->transform = fieldTransform;
 
     children.first[c]->draw();
+  }
+}
+
+void DragBox::init(GUIElement* const * childrenBegin, GUIElement* const * childrenEnd)
+{
+  body.color = defaultBackgroundColor;
+  body.vertices.emplace_back(-0.5f, -0.5f);
+  body.vertices.emplace_back(0.5f, 0.5f);
+
+  for (GUIElement* const * child = childrenBegin; child != childrenEnd; child++)
+  {
+    this->children.first[this->children.second++].reset(*child);
   }
 }

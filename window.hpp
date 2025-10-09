@@ -27,6 +27,8 @@ namespace pfui
 
       Window(const std::initializer_list<GUIElement*>& children = {});
 
+      Window(GUIElement* const * childrenBegin, GUIElement* const * childrenEnd);
+
       void setOpen(bool open);
 
       bool isOpen();
@@ -39,17 +41,17 @@ namespace pfui
 
       bool isMinimized();
 
-      GUIElement* addChild(GUIElement* child);
+      GUIElement* addChild(GUIElement* child, uint8_t index = -1);
 
-      bool removeChild();
+      bool removeChild(uint8_t index = -1);
 
       GUIElement* operator[](uint8_t index);
 
-      uint8_t childNum();
+      uint8_t childCount();
 
-      Rect getGlobalBounds();
+      Rect getGlobalBounds() const override;
 
-      ElementType getType() override;
+      ElementType getType() const override;
 
       void draw() override;
     private:
@@ -63,6 +65,8 @@ namespace pfui
       float close = 1.0f;
       float maximize = 0.0f;
       float minimize = 1.0f;
+
+      void init(GUIElement* const * childrenBegin, GUIElement* const * childrenEnd);
   };
 }
 

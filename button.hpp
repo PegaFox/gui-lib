@@ -13,11 +13,11 @@ namespace pfui
 
       Button();
 
-      bool isPressed();
+      bool isPressed() const;
 
-      Rect getGlobalBounds();
+      Rect getGlobalBounds() const override;
 
-      ElementType getType() override;
+      ElementType getType() const override;
 
       void draw() override;
     private:

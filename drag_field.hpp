@@ -17,6 +17,8 @@ namespace pfui
 
       DragField(const std::initializer_list<DragBox*>& children = {});
 
+      DragField(DragBox* const * childrenBegin, DragBox* const * childrenEnd);
+
       DragBox* addChild(DragBox* child, uint8_t index = -1);
 
       DragBox* addChild(std::shared_ptr<DragBox> child, uint8_t index = -1);
@@ -25,14 +27,18 @@ namespace pfui
 
       DragBox* operator[](uint8_t index);
 
-      uint8_t childNum();
+      uint8_t childCount() const;
 
-      ElementType getType() override;
+      Rect getGlobalBounds() const override;
+
+      ElementType getType() const override;
 
       void draw() override;
     private:
       std::pair<std::array<std::shared_ptr<DragBox>, 32>, uint8_t> children;
       VertexArray body = VertexArray(VertexArray::Type::AABB);
+
+      void init(DragBox* const * childrenBegin, DragBox* const * childrenEnd);
   };
 }
 

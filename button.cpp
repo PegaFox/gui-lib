@@ -9,17 +9,17 @@ Button::Button()
   body.vertices.emplace_back(0.5f, 0.5f);
 }
 
-bool Button::isPressed()
+bool Button::isPressed() const
 {
   return pressed;
 }
 
-Rect Button::getGlobalBounds()
+Rect Button::getGlobalBounds() const
 {
   return body.getGlobalBounds();
 }
 
-GUIElement::ElementType Button::getType()
+GUIElement::ElementType Button::getType() const
 {
   return ElementType::Button;
 }

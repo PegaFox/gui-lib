@@ -6,14 +6,12 @@ using namespace pfui;
 
 DragField::DragField(const std::initializer_list<DragBox*>& children)
 {
-  body.color = defaultObjectColor;
-  body.vertices.emplace_back(-0.5f, -0.5f);
-  body.vertices.emplace_back(0.5f, 0.5f);
+  init(children.begin(), children.end());
+}
 
-  for (DragBox* child: children)
-  {
-    this->children.first[this->children.second++].reset(child);
-  }
+DragBox::DragBox(GUIElement* const * childrenBegin, GUIElement* const * childrenEnd)
+{
+  init(childrenBegin, childrenEnd);
 }
 
 DragBox* DragField::addChild(DragBox* child, uint8_t index)
@@ -77,12 +75,17 @@ DragBox* DragField::operator[](uint8_t index)
   return nullptr;
 }
 
-uint8_t DragField::childNum()
+uint8_t DragField::childCount() const
 {
   return children.second;
 }
 
-GUIElement::ElementType DragField::getType()
+Rect DragBox::getGlobalBounds() const
+{
+  return body.getGlobalBounds();
+}
+
+GUIElement::ElementType DragField::getType() const
 {
   return ElementType::DragField;
 }
@@ -180,5 +183,17 @@ void DragField::draw()
   if (!this->mPressed.states.left)
   {
     held = nullptr;
+  }
+}
+
+void DragField::init(DragBox* const * childrenBegin, DragBox* const * childrenEnd)
+{
+  body.color = defaultBackgroundColor;
+  body.vertices.emplace_back(-0.5f, -0.5f);
+  body.vertices.emplace_back(0.5f, 0.5f);
+
+  for (DragBox* const * child = childrenBegin; child != childrenEnd; child++)
+  {
+    this->children.first[this->children.second++].reset(*child);
   }
 }

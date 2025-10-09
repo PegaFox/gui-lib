@@ -23,9 +23,9 @@ namespace pfui
 
       VertexArray(Type renderType = Type::AABB);
 
-      Rect getGlobalBounds();
+      Rect getGlobalBounds() const override;
 
-      ElementType getType() override;
+      ElementType getType() const override;
 
       void draw() override;
     private:

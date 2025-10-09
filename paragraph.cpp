@@ -2,7 +2,12 @@
 
 using namespace pfui;
 
-GUIElement::ElementType Paragraph::getType()
+Rect Paragraph::getGlobalBounds() const
+{
+  return Rect{glm::vec2(0.0f), glm::vec2(0.0f)};
+}
+
+GUIElement::ElementType Paragraph::getType() const
 {
   return ElementType::Paragraph;
 }

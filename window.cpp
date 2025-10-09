@@ -7,47 +7,14 @@ using namespace pfui;
 
 Window::Window(const std::initializer_list<GUIElement*>& children)
 {
-  this->body.color = defaultBackgroundColor;
-  this->body.vertices.emplace_back(-0.5f, -0.5f);
-  this->body.vertices.emplace_back(0.5f, 0.5f);
-
-  this->titlebar.color = defaultBorderColor;
-  this->titlebar.vertices.emplace_back(-0.5f, -0.5f);
-  this->titlebar.vertices.emplace_back(0.5f, 0.5f);
-  this->titlebar.size.y = 0.07f;
-
-  this->closeSpr.color = defaultObjectColor;
-  this->closeSpr.vertices.insert(closeSpr.vertices.end(), {
-    glm::vec2(-0.5f, -0.5f),
-    glm::vec2(0.5f, 0.5f),
-    glm::vec2(-0.5f, 0.5f),
-    glm::vec2(0.5f, -0.5f),
-  });
-  this->closeSpr.size = glm::vec2(0.05f);
-
-  this->maximizeSpr.color = defaultObjectColor;
-  this->maximizeSpr.vertices.insert(maximizeSpr.vertices.end(), {
-    glm::vec2(-0.5f, -0.5f),
-    glm::vec2(-0.5f, 0.5f),
-    glm::vec2(0.5f, 0.5f),
-    glm::vec2(0.5f, -0.5f),
-    glm::vec2(-0.5f, -0.5f),
-  });
-  maximizeSpr.size = glm::vec2(0.05f);
-
-  this->minimizeSpr.color = defaultObjectColor;
-  this->minimizeSpr.vertices.insert(minimizeSpr.vertices.end(), {
-    glm::vec2(-0.5f, 0.5f),
-    glm::vec2(0.5f, 0.5f),
-  });
-  minimizeSpr.size = glm::vec2(0.05f);
-
-  for (GUIElement* child: children)
-  {
-    this->children.first[this->children.second++] = std::unique_ptr<GUIElement>(child);
-  }
+  init(children.begin(), children.end());
 }
 
+Window::Window(GUIElement* const * childrenBegin, GUIElement* const * childrenEnd)
+{
+  init(childrenBegin, childrenEnd);
+}
+    
 void Window::setOpen(bool open)
 {
   if (open) close = 1.0f;
@@ -81,25 +48,37 @@ bool Window::isMinimized()
   return minimize < 1.0f && minimize >= 0.0f;
 }
 
-GUIElement* Window::addChild(GUIElement* child)
+GUIElement* Window::addChild(GUIElement* child, uint8_t index)
 {
-  if (children.second == 32)
+  if (index == uint8_t(-1))
+  {
+    index = children.second;
+  }
+
+  if (children.second == 32 || index > children.second)
   {
     return nullptr;
   }
 
-  children.first[children.second++].reset(child);
-  return children.first[children.second-1].get();
+  std::move_backward(&children.first[index], &children.first[children.second++], &children.first[index+1]);
+  children.first[index].reset(child);
+  return children.first[index].get();
 }
 
-bool Window::removeChild()
+bool Window::removeChild(uint8_t index)
 {
-  if (children.second == 0)
+  if (index == uint8_t(-1))
+  {
+    index = children.second-1;
+  }
+
+  if (index >= children.second)
   {
     return false;
   }
 
-  children.first[--children.second].reset();
+  children.first[index].reset();
+  std::move(&children.first[index+1], &children.first[children.second--], &children.first[index]);
   return true;
 }
 
@@ -112,17 +91,17 @@ GUIElement* Window::operator[](uint8_t index)
   return nullptr;
 }
 
-uint8_t Window::childNum()
+uint8_t Window::childCount()
 {
   return children.second;
 }
 
-Rect Window::getGlobalBounds()
+Rect Window::getGlobalBounds() const
 {
   return Rect{titlebar.getGlobalBounds().position, body.getGlobalBounds().size+glm::vec2(0.0f, titlebar.getGlobalBounds().size.y)};
 }
 
-GUIElement::ElementType Window::getType()
+GUIElement::ElementType Window::getType() const
 {
   return ElementType::Window;
 }
@@ -475,3 +454,47 @@ void Window::draw()
     }
   }
 }
+
+void Window::init(GUIElement* const * childrenBegin, GUIElement* const * childrenEnd)
+{
+  this->body.color = defaultBackgroundColor;
+  this->body.vertices.emplace_back(-0.5f, -0.5f);
+  this->body.vertices.emplace_back(0.5f, 0.5f);
+
+  this->titlebar.color = defaultBorderColor;
+  this->titlebar.vertices.emplace_back(-0.5f, -0.5f);
+  this->titlebar.vertices.emplace_back(0.5f, 0.5f);
+  this->titlebar.size.y = 0.07f;
+
+  this->closeSpr.color = defaultObjectColor;
+  this->closeSpr.vertices.insert(closeSpr.vertices.end(), {
+    glm::vec2(-0.5f, -0.5f),
+    glm::vec2(0.5f, 0.5f),
+    glm::vec2(-0.5f, 0.5f),
+    glm::vec2(0.5f, -0.5f),
+  });
+  this->closeSpr.size = glm::vec2(0.05f);
+
+  this->maximizeSpr.color = defaultObjectColor;
+  this->maximizeSpr.vertices.insert(maximizeSpr.vertices.end(), {
+    glm::vec2(-0.5f, -0.5f),
+    glm::vec2(-0.5f, 0.5f),
+    glm::vec2(0.5f, 0.5f),
+    glm::vec2(0.5f, -0.5f),
+    glm::vec2(-0.5f, -0.5f),
+  });
+  maximizeSpr.size = glm::vec2(0.05f);
+
+  this->minimizeSpr.color = defaultObjectColor;
+  this->minimizeSpr.vertices.insert(minimizeSpr.vertices.end(), {
+    glm::vec2(-0.5f, 0.5f),
+    glm::vec2(0.5f, 0.5f),
+  });
+  minimizeSpr.size = glm::vec2(0.05f);
+
+  for (GUIElement* const * child = childrenBegin; child != childrenEnd; child++)
+  {
+    this->children.first[this->children.second++] = std::unique_ptr<GUIElement>(*child);
+  }
+}
+
