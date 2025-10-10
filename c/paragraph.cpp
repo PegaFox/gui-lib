@@ -23,7 +23,13 @@ extern "C"
 
   const char* PFUI_ParagraphSetText(PFUI_Paragraph* self, const char* text, size_t textLength)
   {
-    ((Paragraph*)self)->text.assign(text, text + textLength);
+    if (textLength == 0)
+    {
+      ((Paragraph*)self)->text = text;
+    } else
+    {
+      ((Paragraph*)self)->text.assign(text, text + textLength);
+    }
 
     return ((Paragraph*)self)->text.c_str();
   }
@@ -53,25 +59,9 @@ extern "C"
     return (PFUI_ParagraphWrapMode*)&((Paragraph*)self)->wrapMode;
   }
 
-  PFUI_Paragraph* PFUI_ParagraphInit(
-    PFUI_FontID font,
-    PFUI_Color color,
-    const char* text,
-    size_t textLength,
-    float textHeight,
-    bool scrollable,
-    uint32_t drawStart)
+  PFUI_Paragraph* PFUI_ParagraphInit()
   {
-    PFUI_Paragraph* paragraph = (PFUI_Paragraph*)new Paragraph;
-
-    *PFUI_ParagraphFontPtr(paragraph) = font;
-    *PFUI_ParagraphColorPtr(paragraph) = color;
-    PFUI_ParagraphSetText(paragraph, text, textLength);
-    *PFUI_ParagraphTextHeightPtr(paragraph) = textHeight;
-    *PFUI_ParagraphScrollablePtr(paragraph) = scrollable;
-    *PFUI_ParagraphDrawStartPtr(paragraph) = drawStart;
-
-    return paragraph;
+    return (PFUI_Paragraph*)new Paragraph;
   }
 
   void PFUI_ParagraphDeinit(PFUI_Paragraph* self)

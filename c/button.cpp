@@ -11,13 +11,9 @@ extern "C"
     return &((Button*)self)->onPress;
   }
 
-  PFUI_Button* PFUI_ButtonInit(PFUI_ButtonOnPress onPress)
+  PFUI_Button* PFUI_ButtonInit()
   {
-    PFUI_Button* button = (PFUI_Button*)new Button;
-
-    *PFUI_ButtonOnPressPtr(button) = onPress;
-
-    return button;
+    return (PFUI_Button*)new Button;
   }
 
   void PFUI_ButtonDeinit(PFUI_Button* self)

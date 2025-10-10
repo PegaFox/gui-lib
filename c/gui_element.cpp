@@ -58,19 +58,19 @@ extern "C"
   }
 
   // must be called each time the mouse moves in order for gui elements to be interactable
-  void PFUI_UpdateCursor(PFUI_Vec2 pos)
+  void PFUI_updateCursor(PFUI_Vec2 pos)
   {
     GUIElement::updateCursor(*(glm::vec2*)&pos);
   }
 
   // must be called each time a mouse button is pressed or released in order for gui elements to be interactable
-  void PFUI_UpdateMouseButtons(PFUI_MouseButtons buttonStates)
+  void PFUI_updateMouseButtons(PFUI_MouseButtons buttonStates)
   {
     GUIElement::updateMouseButtons(*(MouseButtons*)&buttonStates);
   }
 
   // must be called each time the mouse scroll wheel moves in order for scrolling to work properly
-  void PFUI_UpdateScrollWheel(float offset)
+  void PFUI_updateScrollWheel(float offset)
   {
     GUIElement::updateScrollWheel(offset);
   }

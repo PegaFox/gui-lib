@@ -10,7 +10,7 @@ extern "C" {
 
 typedef struct PFUI_Window PFUI_Window;
 
-const char* PFUI_WindowGetTitle(PFUI_Window* self, size_t* textLength = NULL);
+const char* PFUI_WindowGetTitle(PFUI_Window* self, size_t* textLength);
 const char* PFUI_WindowSetTitle(PFUI_Window* self, const char* text, size_t textLength);
 
 bool* PFUI_WindowDraggablePtr(PFUI_Window* self);
@@ -25,17 +25,7 @@ bool* PFUI_WindowMaximizeButtonPtr(PFUI_Window* self);
 
 bool* PFUI_WindowMinimizeButtonPtr(PFUI_Window* self);
 
-PFUI_Window* PFUI_WindowInit(
-  void** children = NULL,
-  uint8_t childCount = 0,
-  const char* title = NULL,
-  size_t textLength = 0,
-  bool draggable = true,
-  bool titlebar = true,
-  bool resizeable = true,
-  bool closeButton = true,
-  bool maximizeButton = true,
-  bool minimizeButton = true);
+PFUI_Window* PFUI_WindowInit(void** children, uint8_t childCount);
 
 void PFUI_WindowDeinit(PFUI_Window* self);
 
@@ -51,10 +41,10 @@ void PFUI_WindowSetMinimize(PFUI_Window* self, bool minimize);
 
 bool PFUI_WindowIsMinimized(PFUI_Window* self);
 
-void* PFUI_WindowAddChild(PFUI_Window* self, void* child, uint8_t index = -1);
+void* PFUI_WindowAddChild(PFUI_Window* self, void* child, uint8_t index);
 
 // removes and frees the child's memory
-bool PFUI_WindowRemoveChild(PFUI_Window* self, uint8_t index = -1);
+bool PFUI_WindowRemoveChild(PFUI_Window* self, uint8_t index);
 
 void* PFUI_WindowGetChild(PFUI_Window* self, uint8_t index);
 

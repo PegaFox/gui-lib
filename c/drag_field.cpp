@@ -11,13 +11,9 @@ extern "C"
     return &((DragField*)self)->drawStart;
   }
 
-  PFUI_DragField* PFUI_DragFieldInit(PFUI_DragBox** children, uint8_t childCount, uint8_t drawStart)
+  PFUI_DragField* PFUI_DragFieldInit(PFUI_DragBox** children, uint8_t childCount)
   {
-    PFUI_DragField* dragField = (PFUI_DragField*)new DragField((DragBox* const *)children, (DragBox* const *)children + childCount);
-
-    *PFUI_DragFieldDrawStartPtr(dragField) = drawStart;
-
-    return dragField;
+    return (PFUI_DragField*)new DragField((DragBox* const *)children, (DragBox* const *)children + childCount);
   }
 
   void PFUI_DragFieldDeinit(PFUI_DragField* self)

@@ -2,7 +2,6 @@
 #define PEGAFOX_GUI_LIB_GUI_ELEMENT_HPP
 
 #include <memory>
-#include <optional>
 #include <glm/vec2.hpp>
 #include <glm/mat3x3.hpp>
 
@@ -39,8 +38,8 @@ namespace pfui
 
       static void (*drawRect)(Rect rect, Color color);
       static void (*drawLine)(glm::vec2 position1, glm::vec2 position2, Color color);
-      static void (*drawText)(FontID font, std::string text, glm::vec2 pos, float height, Color color);
-      static Rect (*getTextBounds)(FontID font, std::string text, glm::vec2 pos, float height);
+      static void (*drawText)(FontID font, const char* text, glm::vec2 pos, float height, Color color);
+      static Rect (*getTextBounds)(FontID font, const char* text, glm::vec2 pos, float height);
 
       enum class ElementType
       {

@@ -53,29 +53,9 @@ extern "C"
     return &((Window*)self)->minimizeButton;
   }
 
-  PFUI_Window* PFUI_WindowInit(
-    void** children,
-    uint8_t childCount,
-    const char* title,
-    size_t textLength,
-    bool draggable,
-    bool titlebar,
-    bool resizeable,
-    bool closeButton,
-    bool maximizeButton,
-    bool minimizeButton)
+  PFUI_Window* PFUI_WindowInit(void** children, uint8_t childCount)
   {
-    PFUI_Window* window = (PFUI_Window*)new Window((GUIElement* const *)children, (GUIElement* const *)children + childCount);
-
-    PFUI_WindowSetTitle(window, title, textLength);
-    *PFUI_WindowDraggablePtr(window) = draggable;
-    *PFUI_WindowTitlebarPtr(window) = titlebar;
-    *PFUI_WindowResizeablePtr(window) = resizeable;
-    *PFUI_WindowCloseButtonPtr(window) = closeButton;
-    *PFUI_WindowMaximizeButtonPtr(window) = maximizeButton;
-    *PFUI_WindowMinimizeButtonPtr(window) = minimizeButton;
-
-    return window;
+    return (PFUI_Window*)new Window((GUIElement* const *)children, (GUIElement* const *)children + childCount);
   }
 
   void PFUI_WindowDeinit(PFUI_Window* self)

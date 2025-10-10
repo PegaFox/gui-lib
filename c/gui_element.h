@@ -2,6 +2,7 @@
 #define PEGAFOX_GUI_LIB_C_GUI_ELEMENT_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -100,13 +101,13 @@ PFUI_Vec2* PFUI_ElementPosPtr(void* self);
 PFUI_Vec2* PFUI_ElementSizePtr(void* self);
 
 // must be called each time the mouse moves in order for gui elements to be interactable
-void PFUI_UpdateCursor(PFUI_Vec2 pos);
+void PFUI_updateCursor(PFUI_Vec2 pos);
 
 // must be called each time a mouse button is pressed or released in order for gui elements to be interactable
-void PFUI_UpdateMouseButtons(PFUI_MouseButtons buttonStates);
+void PFUI_updateMouseButtons(PFUI_MouseButtons buttonStates);
 
 // must be called each time the mouse scroll wheel moves in order for scrolling to work properly
-void PFUI_UpdateScrollWheel(float offset);
+void PFUI_updateScrollWheel(float offset);
 
 PFUI_Rect PFUI_ElementGetGlobalBounds(void* self);
 

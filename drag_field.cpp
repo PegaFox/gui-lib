@@ -9,7 +9,7 @@ DragField::DragField(const std::initializer_list<DragBox*>& children)
   init(children.begin(), children.end());
 }
 
-DragBox::DragBox(GUIElement* const * childrenBegin, GUIElement* const * childrenEnd)
+DragField::DragField(DragBox* const * childrenBegin, DragBox* const * childrenEnd)
 {
   init(childrenBegin, childrenEnd);
 }
@@ -80,7 +80,7 @@ uint8_t DragField::childCount() const
   return children.second;
 }
 
-Rect DragBox::getGlobalBounds() const
+Rect DragField::getGlobalBounds() const
 {
   return body.getGlobalBounds();
 }
@@ -188,7 +188,7 @@ void DragField::draw()
 
 void DragField::init(DragBox* const * childrenBegin, DragBox* const * childrenEnd)
 {
-  body.color = defaultBackgroundColor;
+  body.color = defaultObjectColor;
   body.vertices.emplace_back(-0.5f, -0.5f);
   body.vertices.emplace_back(0.5f, 0.5f);
 

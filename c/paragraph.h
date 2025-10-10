@@ -20,7 +20,9 @@ typedef enum
 
 PFUI_FontID* PFUI_ParagraphFontPtr(PFUI_Paragraph* self);
 
-const char* PFUI_ParagraphGetText(PFUI_Paragraph* self, size_t* textLength = NULL);
+const char* PFUI_ParagraphGetText(PFUI_Paragraph* self, size_t* textLength);
+
+// textLength can be zero for null termination
 const char* PFUI_ParagraphSetText(PFUI_Paragraph* self, const char* text, size_t textLength);
 
 float* PFUI_ParagraphTextHeightPtr(PFUI_Paragraph* self);
@@ -33,14 +35,7 @@ uint32_t* PFUI_ParagraphDrawStartPtr(PFUI_Paragraph* self);
 
 PFUI_ParagraphWrapMode* PFUI_ParagraphWrapModePtr(PFUI_Paragraph* self);
 
-PFUI_Paragraph* PFUI_ParagraphInit(
-  PFUI_FontID font,
-  PFUI_Color color,
-  const char* text = NULL,
-  size_t textLength = 0,
-  float textHeight = 2.0f,
-  bool scrollable = false,
-  uint32_t drawStart = 0);
+PFUI_Paragraph* PFUI_ParagraphInit();
 
 void PFUI_ParagraphDeinit(PFUI_Paragraph* self);
 

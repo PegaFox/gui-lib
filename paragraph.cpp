@@ -11,7 +11,7 @@ GUIElement::ElementType Paragraph::getType() const
 {
   return ElementType::Paragraph;
 }
-
+#include <iostream>
 void Paragraph::draw()
 {
   if (transform == glm::mat3(0.0f))
@@ -25,7 +25,7 @@ void Paragraph::draw()
 
   float projectedHeight = (transform * glm::vec3(0.0f, this->textHeight, 0.0f)).y;
 
-  if (projectedSize.x == 0.0f || projectedSize.y == 0.0f || this->getTextBounds == nullptr)
+  if (projectedSize.x == 0.0f || projectedSize.y == 0.0f || this->text.empty() || this->getTextBounds == nullptr)
   {
     return;
   }
@@ -69,6 +69,10 @@ void Paragraph::draw()
     paragraphStr.erase(0, pos);
   }
 
+  // Because I've had to deal with way too many infinite loop bugs
+  uint32_t iterLimit = 0;
+  const uint32_t maxIter = this->text.size();
+
   Rect bounds;
   switch (wrapMode)
   {
@@ -77,7 +81,7 @@ void Paragraph::draw()
       {
         text = paragraphStr.substr(0, pos);
 
-        bounds = this->getTextBounds(this->font, this->text, projectedPos, this->textHeight);
+        bounds = this->getTextBounds(this->font, this->text.c_str(), projectedPos, this->textHeight);
 
         bounds.position = invTransform * glm::vec3(bounds.position, 1.0f);
         bounds.size = invTransform * glm::vec3(bounds.size, 0.0f);
@@ -94,9 +98,10 @@ void Paragraph::draw()
       }
       break;
     case WrapMode::LetterWrap:
-      for (std::size_t pos = 0; pos < paragraphStr.size()-1;)
+      iterLimit = 0;
+      for (std::size_t pos = 0; pos < paragraphStr.size()-1 && iterLimit < maxIter; iterLimit++)
       {
-        for (std::size_t i = paragraphStr.size(); i >= pos; i--)
+        for (std::size_t i = paragraphStr.size(); i > pos; i--)
         {
           text = paragraphStr.substr(pos, i-pos);
           if (text[0] == '\n')
@@ -105,7 +110,7 @@ void Paragraph::draw()
             break;
           }
 
-          bounds = this->getTextBounds(this->font, this->text, projectedPos, this->textHeight);
+          bounds = this->getTextBounds(this->font, this->text.c_str(), projectedPos, this->textHeight);
 
           bounds.position = invTransform * glm::vec3(bounds.position, 0.0f);
           bounds.size = invTransform * glm::vec3(bounds.size, 0.0f);
@@ -130,11 +135,12 @@ void Paragraph::draw()
       }
       text = paragraphStr;
 
-      for (std::size_t i = paragraphStr.size(); i != -1; i = paragraphStr.rfind('\n', i-1))
+      iterLimit = 0;
+      for (std::size_t i = paragraphStr.size(); i != -1 && iterLimit < maxIter; i = paragraphStr.rfind('\n', i-1), iterLimit++)
       {
         text = paragraphStr.substr(0, i);
 
-        bounds = this->getTextBounds(this->font, this->text, projectedPos, this->textHeight);
+        bounds = this->getTextBounds(this->font, this->text.c_str(), projectedPos, this->textHeight);
 
         bounds.position = invTransform * glm::vec3(bounds.position, 0.0f);
         bounds.size = invTransform * glm::vec3(bounds.size, 0.0f);
@@ -152,7 +158,8 @@ void Paragraph::draw()
       }
       break;
     case WrapMode::WordWrap:
-      for (std::size_t pos = 0; pos < paragraphStr.size()-1;)
+      iterLimit = 0;
+      for (std::size_t pos = 0; pos < paragraphStr.size()-1 && iterLimit < maxIter; iterLimit++)
       {
         for (std::size_t i = paragraphStr.size(); i > pos; i = paragraphStr.rfind(' ', i-1))
         {
@@ -165,10 +172,14 @@ void Paragraph::draw()
 
           text = paragraphStr.substr(pos, i-pos);
 
-          bounds = this->getTextBounds(this->font, this->text, projectedPos, projectedHeight);
+          bounds = this->getTextBounds(this->font, this->text.c_str(), projectedPos, projectedHeight);
 
-          bounds.position = invTransform * glm::vec3(bounds.position, 1.0f);
-          bounds.size = invTransform * glm::vec3(bounds.size, 0.0f);
+          //std::cout << "(" << bounds.position.x << ", " << bounds.position.y << ", " << bounds.size.x << ", " << bounds.size.y << ")";
+
+          bounds.position = glm::vec3(bounds.position, 1.0f);
+          bounds.size = glm::vec3(bounds.size, 0.0f);
+
+          //std::cout << ", (" << bounds.position.x << ", " << bounds.position.y << ", " << bounds.size.x << ", " << bounds.size.y << ")\n";
 
           if (bounds.position.x+bounds.size.x <= 1.0f)
           {
@@ -180,14 +191,19 @@ void Paragraph::draw()
       }
       text = paragraphStr;
 
-      for (std::size_t i = paragraphStr.size(); i > 0; i = paragraphStr.rfind('\n', i-1))
+      iterLimit = 0;
+      for (std::size_t i = paragraphStr.size(); i > 0 && iterLimit < maxIter; i = paragraphStr.rfind('\n', i-1), iterLimit++)
       {
         text = paragraphStr.substr(0, i);
 
-        bounds = this->getTextBounds(this->font, this->text, projectedPos, projectedHeight);
+        bounds = this->getTextBounds(this->font, this->text.c_str(), projectedPos, projectedHeight);
 
-        bounds.position = invTransform * glm::vec3(bounds.position, 1.0f);
-        bounds.size = invTransform * glm::vec3(bounds.size, 0.0f);
+        //std::cout << "(" << bounds.position.x << ", " << bounds.position.y << ", " << bounds.size.x << ", " << bounds.size.y << ")";
+
+        bounds.position = glm::vec3(bounds.position, 1.0f);
+        bounds.size = glm::vec3(bounds.size, 0.0f);
+
+        //std::cout << ", (" << bounds.position.x << ", " << bounds.position.y << ", " << bounds.size.x << ", " << bounds.size.y << ")\n";
 
         if (bounds.position.y+bounds.size.y <= 1.0f)
         {
@@ -205,10 +221,10 @@ void Paragraph::draw()
 
   if (this->drawText != nullptr)
   {
-    this->drawText(this->font, this->text, projectedPos, projectedHeight, this->color);
+    this->drawText(this->font, this->text.c_str(), projectedPos, projectedHeight, this->color);
   }
 
-  if (scrollable && this->getTextBounds(this->font, this->text, projectedPos, this->textHeight).contains(mPos))
+  if (scrollable && this->getTextBounds(this->font, this->text.c_str(), projectedPos, this->textHeight).contains(mPos))
   {
     drawStart = glm::clamp((float)drawStart-scrollValue, 0.0f, (float)originalStr.size());
     scrollValue = 0.0f;

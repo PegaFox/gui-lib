@@ -1,5 +1,5 @@
-#ifndef PEGAFOX_GUI_LIB_VERTEX_ARRAY_H
-#define PEGAFOX_GUI_LIB_VERTEX_ARRAY_H
+#ifndef PEGAFOX_GUI_LIB_C_VERTEX_ARRAY_H
+#define PEGAFOX_GUI_LIB_C_VERTEX_ARRAY_H
 
 #include <stddef.h>
 
@@ -22,10 +22,10 @@ PFUI_VertexArrayType* PFUI_VertexArrayRenderTypePtr(PFUI_VertexArray* self);
 
 PFUI_Color* PFUI_VertexArrayColorPtr(PFUI_VertexArray* self);
 
-PFUI_Vec2* PFUI_VertexArrayGetVertices(PFUI_VertexArray* self, size_t* vertexCount = NULL);
+PFUI_Vec2* PFUI_VertexArrayGetVertices(PFUI_VertexArray* self, size_t* vertexCount);
 PFUI_Vec2* PFUI_VertexArraySetVertices(PFUI_VertexArray* self, PFUI_Vec2* vertices, size_t vertexCount);
 
-PFUI_VertexArray* PFUI_VertexArrayInit(PFUI_VertexArrayType renderType, PFUI_Color color, PFUI_Vec2* vertices = NULL, size_t vertexCount = 0);
+PFUI_VertexArray* PFUI_VertexArrayInit();
 
 void PFUI_VertexArrayDeinit(PFUI_VertexArray* self);
 

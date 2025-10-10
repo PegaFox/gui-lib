@@ -18,8 +18,8 @@ Color GUIElement::defaultInteractableColor = Color(0.4f, 0.4f, 0.4f, 1.0f);
 
 void (*GUIElement::drawRect)(Rect rect, Color color) = nullptr;
 void (*GUIElement::drawLine)(glm::vec2 position1, glm::vec2 position2, Color color) = nullptr;
-void (*GUIElement::drawText)(FontID font, std::string text, glm::vec2 pos, float height, Color color) = nullptr;
-Rect (*GUIElement::getTextBounds)(FontID font, std::string text, glm::vec2 pos, float height) = nullptr;
+void (*GUIElement::drawText)(FontID font, const char* text, glm::vec2 pos, float height, Color color) = nullptr;
+Rect (*GUIElement::getTextBounds)(FontID font, const char* text, glm::vec2 pos, float height) = nullptr;
 
 // must be called each time the mouse moves in order for gui elements to be interactable
 void GUIElement::updateCursor(glm::vec2 pos)

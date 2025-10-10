@@ -3,6 +3,8 @@
 
 #include "gui_element.hpp"
 
+#include <string>
+
 namespace pfui
 {
   class Paragraph: public GUIElement

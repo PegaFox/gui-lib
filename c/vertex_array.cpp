@@ -33,15 +33,9 @@ extern "C"
     return (PFUI_Vec2*)((VertexArray*)self)->vertices.data();
   }
 
-  PFUI_VertexArray* PFUI_VertexArrayInit(PFUI_VertexArrayType renderType, PFUI_Color color, PFUI_Vec2* vertices, size_t vertexCount)
+  PFUI_VertexArray* PFUI_VertexArrayInit()
   {
-    PFUI_VertexArray* vertexArray = (PFUI_VertexArray*)new VertexArray;
-
-    *PFUI_VertexArrayRenderTypePtr(vertexArray) = renderType;
-    *PFUI_VertexArrayColorPtr(vertexArray) = color;
-    PFUI_VertexArraySetVertices(vertexArray, vertices, vertexCount);
-
-    return vertexArray;
+    return (PFUI_VertexArray*)new VertexArray;
   }
 
   void PFUI_VertexArrayDeinit(PFUI_VertexArray* self)

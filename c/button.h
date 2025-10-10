@@ -13,7 +13,7 @@ typedef void (*PFUI_ButtonOnPress)();
 
 PFUI_ButtonOnPress* PFUI_ButtonOnPressPtr(PFUI_Button* self);
 
-PFUI_Button* PFUI_ButtonInit(PFUI_ButtonOnPress onPress = NULL);
+PFUI_Button* PFUI_ButtonInit();
 
 void PFUI_ButtonDeinit(PFUI_Button* self);
 
