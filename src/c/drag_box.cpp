@@ -1,6 +1,6 @@
-#include "drag_box.h"
+#include "c/drag_box.h"
 
-#include "../drag_box.hpp"
+#include "drag_box.hpp"
 
 using namespace pfui;
 

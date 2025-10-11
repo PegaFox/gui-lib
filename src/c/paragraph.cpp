@@ -1,6 +1,6 @@
-#include "paragraph.h"
+#include "c/paragraph.h"
 
-#include "../paragraph.hpp"
+#include "paragraph.hpp"
 
 using namespace pfui;
 

@@ -1,6 +1,6 @@
-#include "gui_element.h"
+#include "c/gui_element.h"
 
-#include "../gui_element.hpp"
+#include "gui_element.hpp"
 
 using namespace pfui;
 

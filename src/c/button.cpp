@@ -1,6 +1,6 @@
-#include "button.h"
+#include "c/button.h"
 
-#include "../button.hpp"
+#include "button.hpp"
 
 using namespace pfui;
 

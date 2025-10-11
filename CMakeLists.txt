@@ -6,21 +6,22 @@ project(gui-lib)
 
 add_library(gui-lib STATIC
   # main lib
-  gui_element.cpp
-  window.cpp
-  vertex_array.cpp
-  paragraph.cpp
-  button.cpp
-  drag_field.cpp
-  drag_box.cpp
+  src/gui_element.cpp
+  src/window.cpp
+  src/vertex_array.cpp
+  src/paragraph.cpp
+  src/button.cpp
+  src/drag_field.cpp
+  src/drag_box.cpp
 
   # C declarations
-  c/gui_element.cpp
-  c/window.cpp
-  c/vertex_array.cpp
-  c/paragraph.cpp
-  c/button.cpp
-  c/drag_field.cpp
-  c/drag_box.cpp
+  src/c/gui_element.cpp
+  src/c/window.cpp
+  src/c/vertex_array.cpp
+  src/c/paragraph.cpp
+  src/c/button.cpp
+  src/c/drag_field.cpp
+  src/c/drag_box.cpp
 )
 
+target_include_directories(gui-lib PRIVATE include)

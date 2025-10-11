@@ -1,6 +1,6 @@
-#include "window.h"
+#include "c/window.h"
 
-#include "../window.hpp"
+#include "window.hpp"
 
 using namespace pfui;
 

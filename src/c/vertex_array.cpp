@@ -1,6 +1,6 @@
-#include "vertex_array.h"
+#include "c/vertex_array.h"
 
-#include "../vertex_array.hpp"
+#include "vertex_array.hpp"
 
 using namespace pfui;
 
