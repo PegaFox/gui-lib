@@ -1,0 +1,16 @@
+.{
+  .name = .gui_lib,
+  .version = "1.0.0",
+  .minimum_zig_version = "0.15.1",
+  .paths = .{
+    "build.zig",
+    "build.zig.zon",
+    "CMakeLists.txt",
+    "include/",
+    "src/",
+    "LICENSE",
+    "README.md",
+  },
+  .fingerprint = 0xd990d97142645600, // Changing this has security and trust implications.
+}
+
