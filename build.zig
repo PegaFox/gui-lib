@@ -49,6 +49,8 @@ pub fn build(b: *std.Build) void {
     .version = version,
   });
 
+  gui_lib.installHeadersDirectory(.{.src_path = .{.owner = b, .sub_path = "include/"}}, ".", .{.include_extensions = null});
+
   // This declares intent for the executable to be installed into the
   // standard location when the user invokes the "install" step (the default
   // step when running `zig build`).
