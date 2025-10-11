@@ -6,7 +6,7 @@ pub fn build(b: *std.Build) void {
   const target = b.standardTargetOptions(.{});
   const optimize = b.standardOptimizeOption(.{});
     
-  const srcMod = b.createModule(.{
+  const srcMod = b.addModule("gui-lib", .{
     .target = target,
     .optimize = optimize,
     .link_libc = true,
