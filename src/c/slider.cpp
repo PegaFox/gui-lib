@@ -6,7 +6,7 @@ using namespace pfui;
 
 extern "C"
 {
-  float* PFUI_SliderValuePtr(PFUI_Slider* self)
+  float** PFUI_SliderValuePtr(PFUI_Slider* self)
   {
     return &((Slider*)self)->value;
   }

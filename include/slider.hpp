@@ -9,7 +9,7 @@ namespace pfui
   class Slider: public GUIElement
   {
     public:
-      float value = 0.0f;
+      float* value = &defaultValue;
       float min = 0.0f;
       float max = 1.0f;
 
@@ -27,6 +27,8 @@ namespace pfui
       void draw() override;
     private:
       bool handleHeld = false;
+
+      float defaultValue = 0.0f;
 
       VertexArray body = VertexArray(VertexArray::Type::AABB);
       VertexArray handle = VertexArray(VertexArray::Type::AABB);

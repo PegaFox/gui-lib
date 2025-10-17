@@ -11,7 +11,7 @@ typedef struct PFUI_Slider PFUI_Slider;
 
 typedef void (*PFUI_SliderOnChange)(float currentValue);
 
-float* PFUI_SliderValuePtr(PFUI_Slider* self);
+float** PFUI_SliderValuePtr(PFUI_Slider* self);
 
 float* PFUI_SliderMinPtr(PFUI_Slider* self);
 

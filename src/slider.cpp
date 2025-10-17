@@ -39,12 +39,12 @@ void Slider::draw()
       newValue = glm::floor(newValue / this->stepSize) * this->stepSize;
     }
 
-    if (newValue != this->value && this->onChange)
+    if (newValue != *this->value && this->onChange)
     {
       this->onChange(newValue);
     }
 
-    this->value = newValue;
+    *this->value = newValue;
 
     if (!this->mPressed.states.left)
     {
@@ -61,7 +61,7 @@ void Slider::draw()
   body.transform = transform;
   body.draw();
   
-  handle.pos.x = (this->value-min) / (max-min)*2.0f - 1.0f;
+  handle.pos.x = (*this->value-min) / (max-min)*2.0f - 1.0f;
   handle.pos.y = 0.0f;
   //handle.size = glm::vec2(size.x*0.1f, size.y);
   handle.size = glm::vec2(0.1f, 2.0f);
