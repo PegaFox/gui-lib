@@ -98,7 +98,7 @@ void DragField::draw()
   }
 
   glm::mat3 invTransform = glm::inverse(transform);
-  glm::mat3 fieldTransform = transform * glm::mat3(glm::vec3(size.x*0.5f, 0, 0), glm::vec3(0, size.y*0.5f, 0), glm::vec3(pos.x, pos.y, 1));
+  glm::mat3 fieldTransform = transform * viewportTransform(pos, size);
   glm::mat3 childTransform = glm::inverse(normalizationTransform(glm::vec2(2.0f))) * fieldTransform;
 
   body.transform = fieldTransform;

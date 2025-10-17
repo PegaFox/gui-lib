@@ -53,7 +53,7 @@ extern "C"
     return &((Window*)self)->minimizeButton;
   }
 
-  PFUI_Window* PFUI_WindowInit(void** children, uint8_t childCount)
+  PFUI_Window* PFUI_WindowInit(void* const * children, uint8_t childCount)
   {
     return (PFUI_Window*)new Window((GUIElement* const *)children, (GUIElement* const *)children + childCount);
   }

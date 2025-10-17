@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -10,7 +11,7 @@ extern "C" {
 
 typedef struct PFUI_DragBox PFUI_DragBox;
 
-PFUI_DragBox* PFUI_DragBoxInit(void** children, size_t childCount);
+PFUI_DragBox* PFUI_DragBoxInit(void* const * children, size_t childCount);
 
 void PFUI_DragBoxDeinit(PFUI_DragBox* self);
 

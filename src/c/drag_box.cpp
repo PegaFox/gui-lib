@@ -6,7 +6,7 @@ using namespace pfui;
 
 extern "C"
 {
-  PFUI_DragBox* PFUI_DragBoxInit(void** children, size_t childCount)
+  PFUI_DragBox* PFUI_DragBoxInit(void* const * children, size_t childCount)
   {
     return (PFUI_DragBox*)new DragBox((GUIElement* const *)children, (GUIElement* const *)children + childCount);
   }

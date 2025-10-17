@@ -31,7 +31,7 @@ void GUIElement::updateCursor(glm::vec2 pos)
     glm::vec2 delta = pos - mPos;
     if (resizeDirs.value == 0)
     {
-      held->pos += delta;
+      held->pos += glm::vec2(glm::inverse(held->transform) * glm::vec3(delta, 0.0f));
     } else
     {
       if (resizeDirs.flags.left)
@@ -71,17 +71,24 @@ void GUIElement::updateScrollWheel(float offset)
   scrollValue += offset;
 }
 
+// Default transform for standalone elements, currently an identity matrix
 glm::mat3 GUIElement::normalizationTransform(glm::vec2 viewportSize)
 {
-  /*return glm::mat3(
-    glm::vec3(viewportSize.x*0.5f,                0.0f, 0.0f),
-    glm::vec3(               0.0f, viewportSize.y*0.5f, 0.0f),
-    glm::vec3(viewportSize.x*0.5f, viewportSize.y*0.5f, 1.0f));*/
-
   return glm::mat3(
     glm::vec3(1.0f, 0.0f, 0.0f),
     glm::vec3(0.0f, 1.0f, 0.0f),
-    glm::vec3(0.0f, 0.0f, 1.0f));
+    glm::vec3(0.0f, 0.0f, 1.0f)
+  );
+}
+
+// Converts global normalized coordinates into a local rectangle
+glm::mat3 GUIElement::viewportTransform(glm::vec2 viewportPos, glm::vec2 viewportSize)
+{
+  return glm::mat3(
+    glm::vec3(viewportSize.x*0.5f,                0.0f, 0.0f),
+    glm::vec3(               0.0f, viewportSize.y*0.5f, 0.0f),
+    glm::vec3( viewportPos.x     ,  viewportPos.y     , 1.0f)
+  );
 }
 
 std::shared_ptr<GUIElement> GUIElement::held = nullptr;

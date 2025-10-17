@@ -171,7 +171,7 @@ void Window::draw()
   glm::vec2 modifiedSize = glm::mix(size, glm::vec2(2.0f, 2.0f - hasTitlebar * titlebar.size.y), glm::abs(maximize)) * close;
   modifiedSize.y *= glm::abs(minimize);
 
-  glm::mat3 windowTransform = transform * glm::mat3(glm::vec3(modifiedSize.x*0.5f, 0, 0), glm::vec3(0, modifiedSize.y*0.5f, 0), glm::vec3(modifiedPos.x, modifiedPos.y, 1));
+  glm::mat3 windowTransform = transform * viewportTransform(modifiedPos, modifiedSize);
 
   body.transform = windowTransform;
   body.draw();

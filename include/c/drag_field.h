@@ -11,7 +11,7 @@ typedef struct PFUI_DragField PFUI_DragField;
 
 uint8_t* PFUI_DragFieldDrawStartPtr(PFUI_DragField* self);
 
-PFUI_DragField* PFUI_DragFieldInit(PFUI_DragBox** children, uint8_t childCount);
+PFUI_DragField* PFUI_DragFieldInit(PFUI_DragBox* const * children, uint8_t childCount);
 
 void PFUI_DragFieldDeinit(PFUI_DragField* self);
 

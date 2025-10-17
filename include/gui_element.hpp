@@ -47,6 +47,7 @@ namespace pfui
         Window,
         Paragraph,
         Button,
+        Slider,
         VertexArray,
         DragField,
         DragBox
@@ -101,6 +102,7 @@ namespace pfui
       static float scrollValue;
 
       static glm::mat3 normalizationTransform(glm::vec2 viewportSize);
+      static glm::mat3 viewportTransform(glm::vec2 viewportPos, glm::vec2 viewportSize);
   };
 }
 

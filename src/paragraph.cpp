@@ -11,7 +11,7 @@ GUIElement::ElementType Paragraph::getType() const
 {
   return ElementType::Paragraph;
 }
-#include <iostream>
+
 void Paragraph::draw()
 {
   if (transform == glm::mat3(0.0f))

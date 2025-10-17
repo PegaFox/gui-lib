@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,7 +26,7 @@ bool* PFUI_WindowMaximizeButtonPtr(PFUI_Window* self);
 
 bool* PFUI_WindowMinimizeButtonPtr(PFUI_Window* self);
 
-PFUI_Window* PFUI_WindowInit(void** children, uint8_t childCount);
+PFUI_Window* PFUI_WindowInit(void* const * children, uint8_t childCount);
 
 void PFUI_WindowDeinit(PFUI_Window* self);
 
