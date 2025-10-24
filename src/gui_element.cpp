@@ -64,6 +64,11 @@ void GUIElement::updateCursor(glm::vec2 pos)
 // must be called each time a mouse button is pressed or released in order for gui elements to be interactable
 void GUIElement::updateMouseButtons(MouseButtons buttonStates)
 {
+  if (mPressed.states.left && !buttonStates.left)
+  {
+    held = nullptr;
+  }
+
   mPressed.states = buttonStates;
 }
 
