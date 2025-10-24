@@ -98,7 +98,8 @@ uint8_t Window::childCount()
 
 Rect Window::getGlobalBounds() const
 {
-  return Rect{titlebar.getGlobalBounds().position, body.getGlobalBounds().size+glm::vec2(0.0f, titlebar.getGlobalBounds().size.y)};
+  float titlebarHeight = titlebar.getGlobalBounds().size.y;
+  return Rect{body.getGlobalBounds().position-glm::vec2(0.0f, titlebarHeight), body.getGlobalBounds().size+glm::vec2(0.0f, titlebarHeight)};
 }
 
 GUIElement::ElementType Window::getType() const
