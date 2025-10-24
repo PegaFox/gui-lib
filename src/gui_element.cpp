@@ -29,30 +29,32 @@ void GUIElement::updateCursor(glm::vec2 pos)
   {
     //glm::vec2 delta = (pos - glm::vec2(mPos)) / glm::vec2(SCREEN->getSize().x*0.5f, SCREEN->getSize().y*0.5f);
     glm::vec2 delta = pos - mPos;
+    glm::vec2 posOffset(glm::inverse(held->transform) * glm::vec3(delta, 0.0f));
+
     if (resizeDirs.value == 0)
     {
-      held->pos += glm::vec2(glm::inverse(held->transform) * glm::vec3(delta, 0.0f));
+      held->pos += posOffset;
     } else
     {
       if (resizeDirs.flags.left)
       {
-        held->pos.x += delta.x/2.0f;
-        held->size.x -= delta.x;
+        held->pos.x += posOffset.x/2.0f;
+        held->size.x -= posOffset.x;
       }
       if (resizeDirs.flags.right)
       {
-        held->pos.x += delta.x/2.0f;
-        held->size.x += delta.x;
+        held->pos.x += posOffset.x/2.0f;
+        held->size.x += posOffset.x;
       }
       if (resizeDirs.flags.top)
       {
-        held->pos.y += delta.y/2.0f;
-        held->size.y -= delta.y;
+        held->pos.y += posOffset.y/2.0f;
+        held->size.y -= posOffset.y;
       }
       if (resizeDirs.flags.bottom)
       {
-        held->pos.y += delta.y/2.0f;
-        held->size.y += delta.y;
+        held->pos.y += posOffset.y/2.0f;
+        held->size.y += posOffset.y;
       }
     }
   }
