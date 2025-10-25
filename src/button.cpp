@@ -41,11 +41,11 @@ void Button::draw()
   bool currentlyPressed = false;
   if (getGlobalBounds().contains(mPos))
   {
-    body.color = defaultInteractableColor * 1.5f;
+    body.color = glm::vec4(glm::vec3(defaultInteractableColor) * 1.5f, 1.0f);
 
     if (this->mPressed.states.left)
     {
-      body.color = defaultInteractableColor * 0.8f;
+      body.color = glm::vec4(glm::vec3(defaultInteractableColor) * 0.8f, 1.0f);
 
       currentlyPressed = true;
     }
