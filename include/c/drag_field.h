@@ -15,7 +15,7 @@ PFUI_DragField* PFUI_DragFieldInit(PFUI_DragBox* const * children, uint8_t child
 
 void PFUI_DragFieldDeinit(PFUI_DragField* self);
 
-PFUI_DragBox* PFUI_DragFieldAddChild(PFUI_DragField* self, PFUI_DragBox* child, uint8_t index);
+PFUI_DragBox* PFUI_DragFieldAddChild(PFUI_DragField* self, PFUI_DragBox* child, uint8_t index, bool heapAllocated);
 
 // removes and frees the child's memory
 bool PFUI_DragFieldRemoveChild(PFUI_DragField* self, uint8_t index);

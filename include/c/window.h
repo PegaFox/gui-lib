@@ -42,7 +42,7 @@ void PFUI_WindowSetMinimize(PFUI_Window* self, bool minimize);
 
 bool PFUI_WindowIsMinimized(PFUI_Window* self);
 
-void* PFUI_WindowAddChild(PFUI_Window* self, void* child, uint8_t index);
+void* PFUI_WindowAddChild(PFUI_Window* self, void* child, uint8_t index, bool heapAllocated);
 
 // removes and frees the child's memory
 bool PFUI_WindowRemoveChild(PFUI_Window* self, uint8_t index);

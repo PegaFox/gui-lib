@@ -93,9 +93,9 @@ extern "C"
     return ((Window*)self)->isMinimized();
   }
 
-  void* PFUI_WindowAddChild(PFUI_Window* self, void* child, uint8_t index)
+  void* PFUI_WindowAddChild(PFUI_Window* self, void* child, uint8_t index, bool heapAllocated)
   {
-    return ((Window*)self)->addChild((GUIElement*)child, index);
+    return ((Window*)self)->addChild((GUIElement*)child, index, heapAllocated);
   }
 
   // removes and frees the child's memory

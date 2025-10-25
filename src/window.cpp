@@ -48,7 +48,7 @@ bool Window::isMinimized()
   return minimize < 1.0f && minimize >= 0.0f;
 }
 
-GUIElement* Window::addChild(GUIElement* child, uint8_t index)
+GUIElement* Window::addChild(GUIElement* child, uint8_t index, bool heapAllocated)
 {
   if (index == uint8_t(-1))
   {
@@ -61,7 +61,15 @@ GUIElement* Window::addChild(GUIElement* child, uint8_t index)
   }
 
   std::move_backward(&children.first[index], &children.first[children.second++], &children.first[index+1]);
-  children.first[index].reset(child);
+
+  if (heapAllocated)
+  {
+    children.first[index].reset(child);
+  } else
+  {
+    children.first[index].reset(child, HeldDeleter());
+  }
+
   return children.first[index].get();
 }
 

@@ -21,9 +21,9 @@ extern "C"
     delete (DragField*)self;
   }
 
-  PFUI_DragBox* PFUI_DragFieldAddChild(PFUI_DragField* self, PFUI_DragBox* child, uint8_t index)
+  PFUI_DragBox* PFUI_DragFieldAddChild(PFUI_DragField* self, PFUI_DragBox* child, uint8_t index, bool heapAllocated)
   {
-    return (PFUI_DragBox*)((DragField*)self)->addChild((DragBox*)child, index);
+    return (PFUI_DragBox*)((DragField*)self)->addChild((DragBox*)child, index, heapAllocated);
   }
 
   // removes and frees the child's memory

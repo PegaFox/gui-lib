@@ -12,7 +12,7 @@ DragBox::DragBox(GUIElement* const * childrenBegin, GUIElement* const * children
   init(childrenBegin, childrenEnd);
 }
 
-GUIElement* DragBox::addChild(GUIElement* child, uint8_t index)
+GUIElement* DragBox::addChild(GUIElement* child, uint8_t index, bool heapAllocated)
 {
   if (index == uint8_t(-1))
   {
@@ -25,7 +25,15 @@ GUIElement* DragBox::addChild(GUIElement* child, uint8_t index)
   }
 
   std::move_backward(&children.first[index], &children.first[children.second++], &children.first[index+1]);
-  children.first[index].reset(child);
+
+  if (heapAllocated)
+  {
+    children.first[index].reset(child);
+  } else
+  {
+    children.first[index].reset(child, HeldDeleter());
+  }
+
   return children.first[index].get();
 }
 

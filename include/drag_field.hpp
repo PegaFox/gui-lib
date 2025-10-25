@@ -19,7 +19,7 @@ namespace pfui
 
       DragField(DragBox* const * childrenBegin, DragBox* const * childrenEnd);
 
-      DragBox* addChild(DragBox* child, uint8_t index = -1);
+      DragBox* addChild(DragBox* child, uint8_t index = -1, bool heapAllocated = true);
 
       DragBox* addChild(std::shared_ptr<DragBox> child, uint8_t index = -1);
 
