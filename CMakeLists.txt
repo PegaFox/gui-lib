@@ -11,6 +11,7 @@ add_library(gui-lib STATIC
   src/vertex_array.cpp
   src/paragraph.cpp
   src/button.cpp
+  src/selection.cpp
   src/slider.cpp
   src/drag_field.cpp
   src/drag_box.cpp

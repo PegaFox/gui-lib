@@ -25,6 +25,7 @@ pub fn build(b: *std.Build) void {
       "src/vertex_array.cpp",
       "src/paragraph.cpp",
       "src/button.cpp",
+      "src/selection.cpp",
       "src/slider.cpp",
       "src/drag_field.cpp",
       "src/drag_box.cpp",

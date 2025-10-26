@@ -32,7 +32,8 @@ void Slider::draw()
 
   if (this->handleHeld)
   {
-    float newValue = (glm::clamp((glm::inverse(handle.transform) * glm::vec3(this->mPos, 1)).x, -1.0f, 1.0f)+1.0f) * (max-min)*0.5f + min;
+    glm::vec2 localMPos = glm::inverse(handle.transform) * glm::vec3(this->mPos, 1);
+    float newValue = (glm::clamp(localMPos.x, -1.0f, 1.0f)+1.0f) * (max-min)*0.5f + min;
 
     if (this->stepSize != 0.0f)
     {

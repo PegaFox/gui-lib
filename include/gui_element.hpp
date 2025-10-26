@@ -11,6 +11,18 @@ namespace pfui
 
   typedef uint16_t FontID;
 
+  /*
+  * TODO add more units of measurement
+  *
+  * current measurement is a fraction of the viewport (or more accurately, the coordinates are multiplied by the element's transform matrix)
+  * 
+  * other possible measurement systems:
+  * 
+  * - pixels
+  * - physical sizes (inches, centimeters, etc.) would require fetching DPI data
+  * - relative to monitor
+  * - relative to arbitrary element
+  */
   struct Rect
   {
     glm::vec2 position;
