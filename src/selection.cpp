@@ -25,6 +25,11 @@ GUIElement::ElementType Selection::getType() const
 
 void Selection::draw()
 {
+  if (this->optionDimensions.x == 0 || this->optionDimensions.y == 0)
+  {
+    return;
+  }
+
   if (transform == glm::mat3(0.0f))
   {
     transform = normalizationTransform(glm::vec2(2.0f));

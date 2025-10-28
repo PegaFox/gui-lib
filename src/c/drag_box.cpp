@@ -16,9 +16,9 @@ extern "C"
     delete (DragBox*)self;
   }
 
-  void* PFUI_DragBoxAddChild(PFUI_DragBox* self, void* child, uint8_t index, bool heapAllocated)
+  void* PFUI_DragBoxAddChild(PFUI_DragBox* self, void* child, uint8_t index)
   {
-    return ((DragBox*)self)->addChild((GUIElement*)child, index, heapAllocated);
+    return ((DragBox*)self)->addChild((GUIElement*)child, index);
   }
 
   // removes and frees the child's memory

@@ -2,6 +2,7 @@
 #define PEGAFOX_GUI_LIB_C_BUTTON_H
 
 #include <stddef.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {
