@@ -17,6 +17,8 @@ namespace pfui
 
       Selection();
 
+      Rect getSelectedBounds() const;
+
       Rect getGlobalBounds() const override;
 
       ElementType getType() const override;

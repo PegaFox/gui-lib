@@ -4,6 +4,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "gui_element.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -27,6 +29,8 @@ PFUI_SelectionOnChange* PFUI_SelectionOnChangePtr(PFUI_Selection* self);
 PFUI_Selection* PFUI_SelectionInit();
 
 void PFUI_SelectionDeinit(PFUI_Selection* self);
+
+PFUI_Rect PFUI_SelectionGetSelectedBounds(PFUI_Selection* self);
 
 #ifdef __cplusplus
 }

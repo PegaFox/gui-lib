@@ -30,4 +30,11 @@ extern "C"
   {
     delete (Selection*)self;
   }
+
+  PFUI_Rect PFUI_SelectionGetSelectedBounds(PFUI_Selection* self)
+  {
+    Rect bounds = ((Selection*)self)->getSelectedBounds();
+
+    return *(PFUI_Rect*)&bounds;
+  }
 }
