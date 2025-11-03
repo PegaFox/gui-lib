@@ -1,8 +1,6 @@
 #include "window.hpp"
 #include <iostream>
 
-#include <SFML/Window/Cursor.hpp>
-
 using namespace pfui;
 
 Window::Window(const std::initializer_list<GUIElement*>& children)
