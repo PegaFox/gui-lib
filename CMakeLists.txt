@@ -28,4 +28,4 @@ add_library(gui-lib STATIC
   src/c/drag_box.cpp
 )
 
-target_include_directories(gui-lib PRIVATE include)
+target_include_directories(gui-lib PRIVATE include glm)

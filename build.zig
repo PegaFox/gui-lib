@@ -13,6 +13,7 @@ pub fn build(b: *std.Build) void {
     .link_libcpp = true,
   });
 
+  srcMod.addIncludePath(.{.src_path = .{.owner = b, .sub_path = "glm/"}});
   srcMod.addIncludePath(.{.src_path = .{.owner = b, .sub_path = "include/"}});
   srcMod.addCSourceFiles(.{
     // When provided, `files` are relative to `root` rather than the
