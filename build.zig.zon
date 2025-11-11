@@ -1,19 +1,21 @@
 .{
-  .name = .gui_lib,
-  .version = "1.0.0",
-  .minimum_zig_version = "0.15.1",
-  .dependencies = .{
-  },
-  .paths = .{
-    "build.zig",
-    "build.zig.zon",
-    "CMakeLists.txt",
-    "glm/",
-    "include/",
-    "src/",
-    "LICENSE",
-    "README.md",
-  },
-  .fingerprint = 0xd990d97142645600, // Changing this has security and trust implications.
+    .name = .gui_lib,
+    .version = "1.0.0",
+    .minimum_zig_version = "0.15.1",
+    .dependencies = .{
+        .glm = .{
+            .url = "git+https://github.com/g-truc/glm.git#d34c19ecd03ec67811e655866b78145032cd52ae",
+            .hash = "N-V-__8AAAusSQFJ_4yUhGM7HR_HkQyAZVEAbtucNgWFe4Bu",
+        },
+    },
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "CMakeLists.txt",
+        "include/",
+        "src/",
+        "LICENSE",
+        "README.md",
+    },
+    .fingerprint = 0xd990d97142645600, // Changing this has security and trust implications.
 }
-
