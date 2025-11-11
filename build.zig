@@ -13,6 +13,9 @@ pub fn build(b: *std.Build) void {
     .link_libcpp = true,
   });
 
+  const glm = b.dependency("glm", .{});
+
+  srcMod.addIncludePath(.{.dependency = .{.dependency = glm, .sub_path = "."}});
   srcMod.addIncludePath(.{.src_path = .{.owner = b, .sub_path = "glm/"}});
   srcMod.addIncludePath(.{.src_path = .{.owner = b, .sub_path = "include/"}});
   srcMod.addCSourceFiles(.{
