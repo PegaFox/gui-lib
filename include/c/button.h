@@ -10,9 +10,9 @@ extern "C" {
 
 typedef struct PFUI_Button PFUI_Button;
 
-typedef void (*PFUI_ButtonOnPress)();
+typedef void (*PFUI_ButtonOnChange)(bool pressed);
 
-PFUI_ButtonOnPress* PFUI_ButtonOnPressPtr(PFUI_Button* self);
+PFUI_ButtonOnChange* PFUI_ButtonOnChangePtr(PFUI_Button* self);
 
 PFUI_Button* PFUI_ButtonInit();
 

@@ -43,7 +43,7 @@ void Button::draw()
   {
     body.color = glm::vec4(glm::vec3(defaultInteractableColor) * 1.5f, 1.0f);
 
-    if (this->mPressed.states.left)
+    if (GUIElement::mPressed.states.left)
     {
       body.color = glm::vec4(glm::vec3(defaultInteractableColor) * 0.8f, 1.0f);
 
@@ -51,10 +51,10 @@ void Button::draw()
     }
   }
 
-  if (pressed == false && currentlyPressed == true && onPress != nullptr)
+  if (onChange != nullptr && this->pressed != currentlyPressed)
   {
-    onPress();
+    onChange(currentlyPressed);
   }
 
-  pressed = currentlyPressed;
+  this->pressed = currentlyPressed;
 }

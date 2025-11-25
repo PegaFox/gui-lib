@@ -9,7 +9,7 @@ namespace pfui
   class Button: public GUIElement
   {
     public:
-      void (*onPress)() = nullptr;
+      void (*onChange)(bool pressed) = nullptr;
 
       Button();
 

@@ -6,9 +6,9 @@ using namespace pfui;
 
 extern "C"
 {
-  PFUI_ButtonOnPress* PFUI_ButtonOnPressPtr(PFUI_Button* self)
+  PFUI_ButtonOnChange* PFUI_ButtonOnChangePtr(PFUI_Button* self)
   {
-    return &((Button*)self)->onPress;
+    return &((Button*)self)->onChange;
   }
 
   PFUI_Button* PFUI_ButtonInit()
