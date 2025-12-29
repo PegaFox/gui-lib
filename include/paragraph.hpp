@@ -11,7 +11,7 @@ namespace pfui
   {
     public:
       FontID font;
-      std::string text = "Hello, World!";
+      std::string text = "";
       float textHeight = 2.0f;
       Color color;
 
@@ -31,6 +31,19 @@ namespace pfui
   
       void draw() override;
     private:
+      Rect getTextLocalBounds(
+        const std::string& text,
+        const glm::vec2 globalPos,
+        const float globalHeight,
+        const glm::mat3& invTransform) const;
+
+      std::string& shiftTextByScroll(std::string& text) const;
+
+      std::string& wrapText(
+        std::string& text,
+        const glm::vec2 projectedPos,
+        const glm::vec2 projectedSize,
+        const float projectedHeight) const;
   };
 }
 

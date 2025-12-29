@@ -18,8 +18,6 @@ void Paragraph::draw()
   {
     transform = normalizationTransform(glm::vec2(2.0f));
   }
-  glm::mat3 invTransform = glm::inverse(transform);
-
   glm::vec2 projectedPos(transform * glm::vec3(pos, 1.0f));
   glm::vec2 projectedSize(transform * glm::vec3(size, 0.0f));
 
@@ -61,13 +59,70 @@ void Paragraph::draw()
 
   if (scrollable)
   {
-    std::size_t pos = 0;
-    for (uint32_t l = 0; l < drawStart; l++)
-    {
-      pos = paragraphStr.find('\n', pos)+1;
-    }
-    paragraphStr.erase(0, pos);
+    paragraphStr = this->shiftTextByScroll(paragraphStr);
   }
+
+  paragraphStr = this->wrapText(
+    paragraphStr,
+    projectedPos,
+    projectedSize,
+    projectedHeight);
+
+  Rect bounds = getTextBounds(
+    this->font,
+    paragraphStr.c_str(),
+    projectedPos,
+    projectedHeight);
+
+  projectedPos -= bounds.size*0.5f;
+
+  if (this->drawText != nullptr)
+  {
+    this->drawText(this->font, paragraphStr.c_str(), projectedPos, projectedHeight, this->color);
+  }
+
+  if (scrollable && bounds.contains(mPos))
+  {
+    drawStart = glm::clamp((float)drawStart-scrollValue, 0.0f, (float)originalStr.size());
+    scrollValue = 0.0f;
+  }
+}
+
+Rect Paragraph::getTextLocalBounds(
+  const std::string& text,
+  const glm::vec2 globalPos,
+  const float globalHeight,
+  const glm::mat3& invTransform) const
+{
+  Rect bounds = this->getTextBounds(this->font, text.c_str(), globalPos, globalHeight);
+
+  bounds.position = invTransform * glm::vec3(bounds.position, 1.0f);
+  bounds.size = invTransform * glm::vec3(bounds.size, 0.0f);
+
+  return bounds;
+}
+
+std::string& Paragraph::shiftTextByScroll(std::string& text) const
+{
+  std::size_t pos = 0;
+  for (uint32_t l = 0; l < drawStart; l++)
+  {
+    pos = text.find('\n', pos)+1;
+  }
+  text.erase(0, pos);
+
+  return text;
+}
+
+std::string& Paragraph::wrapText(
+  std::string& text,
+  const glm::vec2 projectedPos,
+  const glm::vec2 projectedSize,
+  const float projectedHeight) const
+{
+  std::string newText;
+
+  glm::mat3 invTransform = glm::inverse(transform);
 
   // Because I've had to deal with way too many infinite loop bugs
   uint32_t iterLimit = 0;
@@ -77,43 +132,37 @@ void Paragraph::draw()
   switch (wrapMode)
   {
     case WrapMode::None:
-      for (std::size_t pos = paragraphStr.size(); pos > 0; pos--)
+      for (std::size_t pos = text.size(); pos > 0; pos--)
       {
-        text = paragraphStr.substr(0, pos);
+        newText = text.substr(0, pos);
 
-        bounds = this->getTextBounds(this->font, this->text.c_str(), projectedPos, this->textHeight);
+        bounds = this->getTextLocalBounds(this->text, projectedPos, projectedHeight, invTransform);
 
-        bounds.position = invTransform * glm::vec3(bounds.position, 1.0f);
-        bounds.size = invTransform * glm::vec3(bounds.size, 0.0f);
-
-        if (bounds.position.x+bounds.size.x <= 1.0f)
+        if (bounds.position.x+bounds.size.x <= 2.0f)
         {
           break;
         }
       }
 
-      if (bounds.position.y+bounds.size.y > 1.0f)
+      if (bounds.position.y+bounds.size.y > 2.0f)
       {
-        //text.setString("");
+        //newText.setString("");
       }
       break;
     case WrapMode::LetterWrap:
       iterLimit = 0;
-      for (std::size_t pos = 0; pos < paragraphStr.size()-1 && iterLimit < maxIter; iterLimit++)
+      for (std::size_t pos = 0; pos < text.size()-1 && iterLimit < maxIter; iterLimit++)
       {
-        for (std::size_t i = paragraphStr.size(); i > pos; i--)
+        for (std::size_t i = text.size(); i > pos; i--)
         {
-          text = paragraphStr.substr(pos, i-pos);
-          if (text[0] == '\n')
+          newText = text.substr(pos, i-pos);
+          if (newText[0] == '\n')
           {
             pos = -1;
             break;
           }
 
-          bounds = this->getTextBounds(this->font, this->text.c_str(), projectedPos, this->textHeight);
-
-          bounds.position = invTransform * glm::vec3(bounds.position, 0.0f);
-          bounds.size = invTransform * glm::vec3(bounds.size, 0.0f);
+          bounds = this->getTextLocalBounds(this->text, projectedPos, projectedHeight, invTransform);
 
           if (i == pos)
           {
@@ -121,114 +170,88 @@ void Paragraph::draw()
             break;
           }
 
-          if (bounds.position.x+bounds.size.x <= 1.0f)
+          if (bounds.position.x+bounds.size.x <= 2.0f)
           {
-            if (paragraphStr[i] == ' ')
+            if (text[i] == ' ')
             {
-              paragraphStr.erase(i, 1);
+              text.erase(i, 1);
             }
-            paragraphStr.insert(i, "\n");
+            text.insert(i, "\n");
             pos = i;
             break;
           }
         }
       }
-      text = paragraphStr;
+      newText = text;
 
       iterLimit = 0;
-      for (std::size_t i = paragraphStr.size(); i != -1 && iterLimit < maxIter; i = paragraphStr.rfind('\n', i-1), iterLimit++)
+      for (std::size_t i = text.size(); i != -1 && iterLimit < maxIter; i = text.rfind('\n', i-1), iterLimit++)
       {
-        text = paragraphStr.substr(0, i);
+        newText = text.substr(0, i);
 
-        bounds = this->getTextBounds(this->font, this->text.c_str(), projectedPos, this->textHeight);
+        bounds = this->getTextLocalBounds(this->text, projectedPos, projectedHeight, invTransform);
 
-        bounds.position = invTransform * glm::vec3(bounds.position, 0.0f);
-        bounds.size = invTransform * glm::vec3(bounds.size, 0.0f);
-
-        if (bounds.position.y+bounds.size.y <= 1.0f)
+        if (bounds.position.y+bounds.size.y <= 2.0f)
         {
-          paragraphStr.erase(i);
+          text.erase(i);
           break;
         }
       }
 
-      if (bounds.position.x+bounds.size.x > 1.0f || bounds.position.y+bounds.size.y > 1.0f)
+      if (bounds.position.x+bounds.size.x > 2.0f || bounds.position.y+bounds.size.y > 2.0f)
       {
         text = "";
       }
       break;
     case WrapMode::WordWrap:
       iterLimit = 0;
-      for (std::size_t pos = 0; pos < paragraphStr.size()-1 && iterLimit < maxIter; iterLimit++)
+      for (std::size_t pos = 0; pos < text.size()-1 && iterLimit < maxIter; iterLimit++)
       {
-        for (std::size_t i = paragraphStr.size(); i > pos; i = paragraphStr.rfind(' ', i-1))
+        for (std::size_t i = text.size(); i > pos; i = text.rfind(' ', i-1))
         {
           if (i == -1)
           {
             pos = -1;
-            wrapMode = WrapMode::LetterWrap;
+            //wrapMode = WrapMode::LetterWrap;
             break;
           }
 
-          text = paragraphStr.substr(pos, i-pos);
+          newText = text.substr(pos, i-pos);
 
-          bounds = this->getTextBounds(this->font, this->text.c_str(), projectedPos, projectedHeight);
+          bounds = this->getTextLocalBounds(this->text, projectedPos, projectedHeight, invTransform);
 
-          //std::cout << "(" << bounds.position.x << ", " << bounds.position.y << ", " << bounds.size.x << ", " << bounds.size.y << ")";
-
-          bounds.position = glm::vec3(bounds.position, 1.0f);
-          bounds.size = glm::vec3(bounds.size, 0.0f);
-
-          //std::cout << ", (" << bounds.position.x << ", " << bounds.position.y << ", " << bounds.size.x << ", " << bounds.size.y << ")\n";
-
-          if (bounds.position.x+bounds.size.x <= 1.0f)
+          if (bounds.position.x+bounds.size.x <= 2.0f)
           {
-            paragraphStr[i] = '\n';
+            text[i] = '\n';
             pos = i;
             break;
           }
         }
       }
-      text = paragraphStr;
+      newText = text;
 
       iterLimit = 0;
-      for (std::size_t i = paragraphStr.size(); i > 0 && iterLimit < maxIter; i = paragraphStr.rfind('\n', i-1), iterLimit++)
+      for (std::size_t i = text.size(); i > 0 && iterLimit < maxIter; i = text.rfind('\n', i-1), iterLimit++)
       {
-        text = paragraphStr.substr(0, i);
+        newText = text.substr(0, i);
 
-        bounds = this->getTextBounds(this->font, this->text.c_str(), projectedPos, projectedHeight);
+        bounds = this->getTextLocalBounds(this->text, projectedPos, projectedHeight, invTransform);
 
-        //std::cout << "(" << bounds.position.x << ", " << bounds.position.y << ", " << bounds.size.x << ", " << bounds.size.y << ")";
-
-        bounds.position = glm::vec3(bounds.position, 1.0f);
-        bounds.size = glm::vec3(bounds.size, 0.0f);
-
-        //std::cout << ", (" << bounds.position.x << ", " << bounds.position.y << ", " << bounds.size.x << ", " << bounds.size.y << ")\n";
-
-        if (bounds.position.y+bounds.size.y <= 1.0f)
+        if (bounds.position.y+bounds.size.y <= 2.0f)
         {
-          paragraphStr.erase(i);
+          text.erase(i);
           break;
         }
       }
 
-      if (bounds.position.x+bounds.size.x > 1.0f || bounds.position.y+bounds.size.y > 1.0f)
+      if (bounds.position.x+bounds.size.x > 2.0f || bounds.position.y+bounds.size.y > 2.0f)
       {
-        text = "";
+        newText = "";
       }
       break;
   }
 
-  if (this->drawText != nullptr)
-  {
-    this->drawText(this->font, this->text.c_str(), projectedPos, projectedHeight, this->color);
-  }
+  //text = newText;
 
-  if (scrollable && this->getTextBounds(this->font, this->text.c_str(), projectedPos, this->textHeight).contains(mPos))
-  {
-    drawStart = glm::clamp((float)drawStart-scrollValue, 0.0f, (float)originalStr.size());
-    scrollValue = 0.0f;
-  }
-
-  text = originalStr;
+  return text;
 }
