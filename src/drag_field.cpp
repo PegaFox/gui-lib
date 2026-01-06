@@ -1,6 +1,5 @@
 #include "drag_field.hpp"
 #include <algorithm>
-#include <fstream>
 
 using namespace pfui;
 
@@ -125,7 +124,7 @@ void DragField::draw()
         if (mPos.y >= yPos && mPos.y < yPos + itemHeight)
         {
           index = c;
-        } else if (children.first[c].get() == held.get())
+        } else if (children.first[c].get() == held.get()) // This only triggers when moving the cursor out of the currently selected location
         {
           removeChild(c);
           c--;

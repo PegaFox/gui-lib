@@ -106,6 +106,55 @@ namespace pfui
         uint8_t value;
       };
 
+      size_t childrenStartIndex;
+
+      static struct ReferenceArray
+      {
+        struct InsertChildError
+        {
+          size_t index;
+          GUIElement* item;
+        };
+
+        GUIElement* const* data() const
+        {
+          return this->items.data();
+        }
+
+        void insertChild(size_t index, GUIElement* item)
+        {
+          if (index == 0 || this->items[index-1] == nullptr)
+          {
+            throw InsertChildError{index, item};
+          }
+
+          this->items.insert(this->items.begin()+index, item);
+
+          for (size_t p = index+1; p < this->items.size()-1; p++)
+          {
+            if (this->items[p] != nullptr)
+            {
+              continue;
+            }
+
+            p++;
+            this->items[p]->childrenStartIndex = p;
+          }
+        }
+
+        // Allocates a location for a new parent-child array, returning the index of the parent pointer at the start of the array 
+        size_t appendParent(GUIElement* parent)
+        {
+          this->items.insert(this->items.end(), {parent, nullptr});
+
+          return this->items.size()-2;
+        }
+
+        private:
+          // A vector of null-terminated arrays starting with a pointer to the parent and containing pointers to the children
+          std::vector<GUIElement*> items;
+      } references;
+
       static std::shared_ptr<GUIElement> held;
       static ResizeDirs resizeDirs;
 
