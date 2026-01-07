@@ -22,7 +22,7 @@ extern "C"
   }
 
   // removes and frees the child's memory
-  bool PFUI_DragBoxRemoveChild(PFUI_DragBox* self, uint8_t index)
+  void* PFUI_DragBoxRemoveChild(PFUI_DragBox* self, uint8_t index)
   {
     return ((DragBox*)self)->removeChild(index);
   }

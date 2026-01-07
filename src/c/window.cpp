@@ -99,7 +99,7 @@ extern "C"
   }
 
   // removes and frees the child's memory
-  bool PFUI_WindowRemoveChild(PFUI_Window* self, uint8_t index)
+  void* PFUI_WindowRemoveChild(PFUI_Window* self, uint8_t index)
   {
     return ((Window*)self)->removeChild(index);
   }

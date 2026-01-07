@@ -12,62 +12,6 @@ DragBox::DragBox(GUIElement* const * childrenBegin, GUIElement* const * children
   init(childrenBegin, childrenEnd);
 }
 
-GUIElement* DragBox::addChild(GUIElement* child, uint8_t index, bool heapAllocated)
-{
-  if (index == uint8_t(-1))
-  {
-    index = children.second;
-  }
-
-  if (children.second == 32 || index > children.second)
-  {
-    return nullptr;
-  }
-
-  std::move_backward(&children.first[index], &children.first[children.second++], &children.first[index+1]);
-
-  if (heapAllocated)
-  {
-    children.first[index].reset(child);
-  } else
-  {
-    children.first[index].reset(child, HeldDeleter());
-  }
-
-  return children.first[index].get();
-}
-
-bool DragBox::removeChild(uint8_t index)
-{
-  if (index == uint8_t(-1))
-  {
-    index = children.second-1;
-  }
-
-  if (index >= children.second)
-  {
-    return false;
-  }
-
-  children.first[index].reset();
-  std::move(&children.first[index+1], &children.first[children.second--], &children.first[index]);
-  return true;
-}
-
-GUIElement* DragBox::operator[](uint8_t index)
-{
-  if (index < children.second)
-  {
-    return children.first[index].get();
-  }
-  return nullptr;
-}
-
-uint8_t DragBox::childCount() const
-{
-  return children.second;
-}
-
 Rect DragBox::getGlobalBounds() const
 {
   return body.getGlobalBounds();
@@ -92,12 +36,12 @@ void DragBox::draw()
   body.transform = fieldTransform;
   body.draw();
 
-  for (uint8_t c = 0; c < children.second; c++)
+  for (uint8_t c = 0; c < this->childrenCount; c++)
   {
     //children.first[c]->transform = childTransform;
-    children.first[c]->transform = fieldTransform;
+    (*this)[c]->transform = fieldTransform;
 
-    children.first[c]->draw();
+    (*this)[c]->draw();
   }
 }
 
@@ -107,8 +51,9 @@ void DragBox::init(GUIElement* const * childrenBegin, GUIElement* const * childr
   body.vertices.emplace_back(-0.5f, -0.5f);
   body.vertices.emplace_back(0.5f, 0.5f);
 
-  for (GUIElement* const * child = childrenBegin; child != childrenEnd; child++)
+  
+  for (GUIElement* const* child = childrenBegin; child != childrenEnd; child++)
   {
-    this->children.first[this->children.second++].reset(*child);
+    this->addChild(*child);
   }
 }

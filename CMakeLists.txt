@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.30)
 
 set(CMAKE_CXX_STANDARD 20)
 
-project(gui-lib)
+project(gui-lib VERSION 3.1.0)
 
 add_library(gui-lib STATIC
   # main lib

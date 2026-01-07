@@ -78,6 +78,125 @@ void GUIElement::updateScrollWheel(float offset)
   scrollValue += offset;
 }
 
+GUIElement::GUIElement()
+{
+  this->childrenStartIndex = GUIElement::references.appendParent(this);
+}
+
+GUIElement* GUIElement::addChild(GUIElement* child, size_t index)
+{
+  GUIElement::references.parentInsertChild(this, index, child);
+
+  return child;
+}
+
+GUIElement* GUIElement::removeChild(size_t index)
+{
+  GUIElement* child = (*this)[index];
+
+  try
+  {
+    GUIElement::references.parentRemoveChild(this, index);
+  } catch (ReferenceArray::RemoveChildError)
+  {
+    return nullptr;
+  }
+
+  return child;
+}
+
+GUIElement* GUIElement::operator[](size_t index)
+{
+  if (index < this->childrenCount)
+  {
+    return GUIElement::references.children(this)[index];
+  }
+  return nullptr;
+}
+
+size_t GUIElement::childCount()
+{
+  return this->childrenCount;
+}
+
+GUIElement* const* GUIElement::ReferenceArray::data() const
+{
+  return this->items.data();
+}
+
+GUIElement* const* GUIElement::ReferenceArray::children(GUIElement* parent) const
+{
+  return &this->items.data()[parent->childrenStartIndex+1];
+}
+
+bool GUIElement::ReferenceArray::isParent(size_t index)
+{
+  return index == 0 || this->items[index-1] == nullptr;
+}
+
+void GUIElement::ReferenceArray::insertChild(size_t index, GUIElement* item)
+{
+  if (this->isParent(index))
+  {
+    throw InsertChildError{index, item};
+  }
+
+  this->items.insert(this->items.begin()+index, item);
+
+  this->updateChildStartIndices(index+1);
+}
+
+void GUIElement::ReferenceArray::parentInsertChild(GUIElement* parent, size_t index, GUIElement* item)
+{
+  index = std::min(index, parent->childrenCount);
+
+  parent->childrenCount++;
+
+  this->insertChild(parent->childrenStartIndex+1 + index, item);
+}
+
+void GUIElement::ReferenceArray::removeChild(size_t index)
+{
+  if (this->isParent(index))
+  {
+    throw RemoveChildError{index};
+  }
+
+  this->items.erase(this->items.begin()+index);
+
+  this->updateChildStartIndices(index);
+}
+
+void GUIElement::ReferenceArray::parentRemoveChild(GUIElement* parent, size_t index)
+{
+  index = std::min(index, parent->childrenCount-1);
+
+  parent->childrenCount--;
+  this->removeChild(parent->childrenStartIndex+1 + index);
+}
+
+// Allocates a location for a new parent-child array, returning the index of the parent pointer at the start of the array 
+size_t GUIElement::ReferenceArray::appendParent(GUIElement* parent)
+{
+  this->items.insert(this->items.end(), {parent, nullptr});
+
+  return this->items.size()-2;
+}
+
+void GUIElement::ReferenceArray::updateChildStartIndices(size_t startIndex)
+{
+  for (size_t p = startIndex; p < this->items.size()-1; p++)
+  {
+    if (this->items[p] != nullptr)
+    {
+      continue;
+    }
+
+    p++;
+    this->items[p]->childrenStartIndex = p;
+  }
+}
+
 // Default transform for standalone elements, currently an identity matrix
 glm::mat3 GUIElement::normalizationTransform(glm::vec2 viewportSize)
 {
@@ -97,6 +216,8 @@ glm::mat3 GUIElement::viewportTransform(glm::vec2 viewportPos, glm::vec2 viewpor
     glm::vec3( viewportPos.x     ,  viewportPos.y     , 1.0f)
   );
 }
+
+GUIElement::ReferenceArray GUIElement::references = {};
 
 std::shared_ptr<GUIElement> GUIElement::held = nullptr;
 GUIElement::ResizeDirs GUIElement::resizeDirs;

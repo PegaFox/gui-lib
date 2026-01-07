@@ -18,7 +18,7 @@ void PFUI_DragBoxDeinit(PFUI_DragBox* self);
 void* PFUI_DragBoxAddChild(PFUI_DragBox* self, void* child, uint8_t index);
 
 // removes and frees the child's memory
-bool PFUI_DragBoxRemoveChild(PFUI_DragBox* self, uint8_t index);
+void* PFUI_DragBoxRemoveChild(PFUI_DragBox* self, uint8_t index);
 
 void* PFUI_DragBoxGetChild(PFUI_DragBox* self, uint8_t index);
 

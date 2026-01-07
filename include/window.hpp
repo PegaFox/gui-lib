@@ -41,21 +41,12 @@ namespace pfui
 
       bool isMinimized();
 
-      GUIElement* addChild(GUIElement* child, uint8_t index = -1, bool heapAllocated = true);
-
-      bool removeChild(uint8_t index = -1);
-
-      GUIElement* operator[](uint8_t index);
-
-      uint8_t childCount();
-
       Rect getGlobalBounds() const override;
 
       ElementType getType() const override;
 
       void draw() override;
     private:
-      std::pair<std::array<std::shared_ptr<GUIElement>, 32>, uint8_t> children;
       VertexArray body = VertexArray(VertexArray::Type::AABB);
       VertexArray titlebar = VertexArray(VertexArray::Type::AABB);
       VertexArray closeSpr = VertexArray(VertexArray::Type::Line);

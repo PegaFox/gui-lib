@@ -82,6 +82,16 @@ namespace pfui
       // must be called each time the mouse scroll wheel moves in order for scrolling to work properly
       static void updateScrollWheel(float offset);
 
+      GUIElement();
+
+      GUIElement* addChild(GUIElement* child, size_t index = -1);
+
+      GUIElement* removeChild(size_t index = -1);
+
+      GUIElement* operator[](size_t index);
+
+      size_t childCount();
+
       virtual Rect getGlobalBounds() const = 0;
 
       virtual ElementType getType() const = 0;
@@ -108,6 +118,8 @@ namespace pfui
 
       size_t childrenStartIndex;
 
+      size_t childrenCount = 0;
+
       static struct ReferenceArray
       {
         struct InsertChildError
@@ -116,43 +128,33 @@ namespace pfui
           GUIElement* item;
         };
 
-        GUIElement* const* data() const
+        struct RemoveChildError
         {
-          return this->items.data();
-        }
+          size_t index;
+        };
 
-        void insertChild(size_t index, GUIElement* item)
-        {
-          if (index == 0 || this->items[index-1] == nullptr)
-          {
-            throw InsertChildError{index, item};
-          }
+        GUIElement* const* data() const;
 
-          this->items.insert(this->items.begin()+index, item);
+        GUIElement* const* children(GUIElement* parent) const;
 
-          for (size_t p = index+1; p < this->items.size()-1; p++)
-          {
-            if (this->items[p] != nullptr)
-            {
-              continue;
-            }
+        bool isParent(size_t index);
 
-            p++;
-            this->items[p]->childrenStartIndex = p;
-          }
-        }
+        void insertChild(size_t index, GUIElement* item);
+
+        void parentInsertChild(GUIElement* parent, size_t index, GUIElement* item);
+
+        void removeChild(size_t index);
+
+        void parentRemoveChild(GUIElement* parent, size_t index);
 
         // Allocates a location for a new parent-child array, returning the index of the parent pointer at the start of the array 
-        size_t appendParent(GUIElement* parent)
-        {
-          this->items.insert(this->items.end(), {parent, nullptr});
-
-          return this->items.size()-2;
-        }
+        size_t appendParent(GUIElement* parent);
 
         private:
           // A vector of null-terminated arrays starting with a pointer to the parent and containing pointers to the children
           std::vector<GUIElement*> items;
+
+          void updateChildStartIndices(size_t startIndex = 0);
       } references;
 
       static std::shared_ptr<GUIElement> held;

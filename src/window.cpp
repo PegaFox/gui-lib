@@ -46,62 +46,6 @@ bool Window::isMinimized()
   return minimize < 1.0f && minimize >= 0.0f;
 }
 
-GUIElement* Window::addChild(GUIElement* child, uint8_t index, bool heapAllocated)
-{
-  if (index == uint8_t(-1))
-  {
-    index = children.second;
-  }
-
-  if (children.second == 32 || index > children.second)
-  {
-    return nullptr;
-  }
-
-  std::move_backward(&children.first[index], &children.first[children.second++], &children.first[index+1]);
-
-  if (heapAllocated)
-  {
-    children.first[index].reset(child);
-  } else
-  {
-    children.first[index].reset(child, HeldDeleter());
-  }
-
-  return children.first[index].get();
-}
-
-bool Window::removeChild(uint8_t index)
-{
-  if (index == uint8_t(-1))
-  {
-    index = children.second-1;
-  }
-
-  if (index >= children.second)
-  {
-    return false;
-  }
-
-  children.first[index].reset();
-  std::move(&children.first[index+1], &children.first[children.second--], &children.first[index]);
-  return true;
-}
-
-GUIElement* Window::operator[](uint8_t index)
-{
-  if (index < children.second)
-  {
-    return children.first[index].get();
-  }
-  return nullptr;
-}
-
-uint8_t Window::childCount()
-{
-  return children.second;
-}
-
 Rect Window::getGlobalBounds() const
 {
   float titlebarHeight = titlebar.getGlobalBounds().size.y;
@@ -237,10 +181,10 @@ void Window::draw()
     result.insert(result.end(), drawData.begin(), drawData.end());
   }*/
 
-  for (uint8_t c = 0; c < children.second; c++)
+  for (uint8_t c = 0; c < this->childrenCount; c++)
   {
-    children.first[c]->transform = windowTransform;
-    children.first[c]->draw();
+    (*this)[c]->transform = windowTransform;
+    (*this)[c]->draw();
   }
 
   bool cursorChanged = false;
@@ -501,7 +445,7 @@ void Window::init(GUIElement* const * childrenBegin, GUIElement* const * childre
 
   for (GUIElement* const * child = childrenBegin; child != childrenEnd; child++)
   {
-    this->children.first[this->children.second++] = std::unique_ptr<GUIElement>(*child);
+    this->addChild(*child);
   }
 }
 
